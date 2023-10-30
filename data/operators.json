@@ -1,32 +1,32 @@
 {
     "Fermenters": [
         {
-            "Scrap": {
+                "Name": "Scrap",
                 "Efficiency": 0.5,
                 "Cost": 320,
                 "Energy Usage": 46600
-            }
+            
         },
         {
-            "Average": {
+                "Name": "Average",
                 "Efficiency": 0.75,
                 "Cost": 380,
                 "Energy Usage": 47200
-            }
+            
         },
         {
-            "Premium": {
+                "Name": "Premium",
                 "Efficiency": 0.9,
                 "Cost": 460,
                 "Energy Usage": 47500
-            }
+            
         },
         {
-            "World-class": {
+                "Name": "World-class",
                 "Efficiency": 0.95,
                 "Cost": 1100,
                 "Energy Usage": 4800
-            }
+            
         }
     ],
     "Distillation Units": [
@@ -38,25 +38,25 @@
             }
         },
         {
-            "Average": {
+                "Name": "Average",
                 "Efficiency": 0.9,
                 "Cost": 460,
                 "Energy Usage": 47812
-            }
+            
         },
         {
-            "Premium": {
+                "Name": "Premium",
                 "Efficiency": 0.915,
                 "Cost": 560,
                 "Energy Usage": 48200
-            }
+            
         },
         {
-            "World-class": {
+                "Name": "World-class",
                 "Efficiency": 0.95,
                 "Cost": 1370,
                 "Energy Usage": 49500
-            }
+            
         }
     ],
     "Filtration and Dehydration": [
@@ -68,25 +68,25 @@
             }
         },
         {
-            "Average": {
+                "Name": "Average",
                 "Efficiency": 0.75,
                 "Cost": 240,
                 "Energy Usage": 49536
-            }
+            
         },
         {
-            "Premium": {
+                "Name": "Premium",
                 "Efficiency": 0.9,
                 "Cost": 280,
                 "Energy Usage": 50350
-            }
+            
         },
         {
-            "World-class": {
+                "Name": "World-class",
                 "Efficiency": 0.98,
                 "Cost": 480,
                 "Energy Usage": 51000
-            }
+            
         }
     ]
 }

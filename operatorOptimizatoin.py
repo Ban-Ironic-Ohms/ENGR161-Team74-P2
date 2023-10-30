@@ -4,10 +4,9 @@ import operationCalculations as oC
 
 def loadData(filepath):
     with open(filepath, "r") as file:
-        return json.loads(file)
+        return json.load(file)
     
 data = loadData("data/operators.json")
-
 class result:
     def __init__(self, eff=0, cost=0, power=0) -> None:
         self.eff = eff
@@ -26,4 +25,13 @@ b = [
     [41, 42, 43, 44]
 ]
 
-def calculate(ferm, dist, filt, dhyd):
+def calculateEff(data, ferm, dist, filt, dhyd):
+    print(data["Fermenters"][ferm])
+    ferm_eff = data["Fermenters"][ferm]["Efficiency"]
+    dist_eff = data["Fermenters"][dist]["Efficiency"]
+    filt_eff = data["Fermenters"][filt]["Efficiency"]
+    dhyd_eff = data["Fermenters"][dhyd]["Efficiency"]
+    return(ferm_eff * dist_eff * filt_eff * dhyd_eff)
+
+print(calculateEff(data, 1, 1, 1, 1))
+    
