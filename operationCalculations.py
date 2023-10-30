@@ -1,5 +1,5 @@
 class solution:
-    def __init__(self) -> None:
+    def __init__(self, water, etc) -> None:
         self.water = water
         self.etc = etc
 

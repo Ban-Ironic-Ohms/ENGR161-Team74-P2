@@ -1,0 +1,92 @@
+{
+    "Fermenters": [
+        {
+            "Scrap": {
+                "Efficiency": 0.5,
+                "Cost": 320,
+                "Energy Usage": 46600
+            }
+        },
+        {
+            "Average": {
+                "Efficiency": 0.75,
+                "Cost": 380,
+                "Energy Usage": 47200
+            }
+        },
+        {
+            "Premium": {
+                "Efficiency": 0.9,
+                "Cost": 460,
+                "Energy Usage": 47500
+            }
+        },
+        {
+            "World-class": {
+                "Efficiency": 0.95,
+                "Cost": 1100,
+                "Energy Usage": 4800
+            }
+        }
+    ],
+    "Distillation Units": [
+        {
+            "Scrap": {
+                "Efficiency": 0.81,
+                "Cost": 390,
+                "Energy Usage": 47004
+            }
+        },
+        {
+            "Average": {
+                "Efficiency": 0.9,
+                "Cost": 460,
+                "Energy Usage": 47812
+            }
+        },
+        {
+            "Premium": {
+                "Efficiency": 0.915,
+                "Cost": 560,
+                "Energy Usage": 48200
+            }
+        },
+        {
+            "World-class": {
+                "Efficiency": 0.95,
+                "Cost": 1370,
+                "Energy Usage": 49500
+            }
+        }
+    ],
+    "Filtration and Dehydration": [
+        {
+            "Scrap": {
+                "Efficiency": 0.5,
+                "Cost": 200,
+                "Energy Usage": 48800
+            }
+        },
+        {
+            "Average": {
+                "Efficiency": 0.75,
+                "Cost": 240,
+                "Energy Usage": 49536
+            }
+        },
+        {
+            "Premium": {
+                "Efficiency": 0.9,
+                "Cost": 280,
+                "Energy Usage": 50350
+            }
+        },
+        {
+            "World-class": {
+                "Efficiency": 0.98,
+                "Cost": 480,
+                "Energy Usage": 51000
+            }
+        }
+    ]
+}
