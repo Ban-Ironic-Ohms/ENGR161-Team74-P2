@@ -5,10 +5,10 @@ class solution:
         self.sugar = sugar
         self.ethanol = ethanol
 
-class waste(solution):
-    def __init__(self) -> None:
-        super().__init__()
-        self.state = solid lq, gas
+#class waste(solution):
+#   def __init__(self) -> None:
+#      super().__init__()
+#     self.state = solid lq, gas
     
     
 def fermenter(eff, sol):
