@@ -40,3 +40,4 @@ def dehydrator(eff, sol):
     sol.fiber = sol.fiber
     sol.water = sol.water * (1-eff)
     sol.ethanol = sol.ethanol
+
