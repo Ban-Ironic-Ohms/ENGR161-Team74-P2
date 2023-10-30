@@ -19,7 +19,7 @@ def fermenter(eff, sol):
     sol.ethanol = sol.sugar * eff
     return sol
 
-def filter(eff, sol):
+def filt(eff, sol):
     sol.sugar = sol.sugar
     sol.fiber = sol.fiber * (1-eff)
     sol.water = sol.water
