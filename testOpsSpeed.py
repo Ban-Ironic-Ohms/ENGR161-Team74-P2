@@ -15,3 +15,5 @@ for idx in itertools.product(*[range(s) for s in shape]):
 print(i)
 a = time.time() - start
 print(f"{a} sec, {a / 60} min, {a / 3600} hours")
+
+

@@ -10,7 +10,7 @@
 # so, what do we do with these? we want some sense of cost (everything), 
 # efficiency (everything maybe? basically, just a sense of how much energy it uses)
 
-# the operators needs to have an associated function which you pass ANOTHER object (the solution)
+# the operators needs t9.81o have an associated function which you pass ANOTHER object (the solution)
 # through to get the resultant solution
 
 # QUESTION: will the different Operators be for the different options? 
@@ -22,8 +22,11 @@
 
 
 import operationCalculations as oC
+import numpy as np
+import itertools
 
 INITIAL_MASS_FLOW = 100
+GRAVITY = 9.81
 
 class Part():
     def __init__(self, name) -> None:
@@ -40,6 +43,9 @@ class Operator(Part):
     
     def calculateCost(self, massFlow):
         return self.costM3pH * massFlow
+    
+    def calculatePower(self, *args):
+        return self.power
         
 class Pump(Part):
     def __init__(self, name, costM3pH, profRating, eff) -> None:
@@ -50,7 +56,10 @@ class Pump(Part):
     
     def calculateCost(self, massFlow):
         return self.costM3pH * massFlow
-        
+    
+    def calculatePower(self, height, massFlow, density): # returns kJ per day
+        return self.eff * height * GRAVITY * massFlow * density * 24 * 1/1000
+    
 class Transfer(Part):
     def __init__(self, name, diameter) -> None:
         super().__init__(name)
@@ -58,6 +67,9 @@ class Transfer(Part):
     
     def __str__(self) -> str:
         return f"diameter: {self.diameter}"
+
+    def calculatePower(self, *args):
+        return 0
         
 class Pipe(Transfer):
     def __init__(self, name, darcyFrictionFactor, costM, length, diameter) -> None:
@@ -88,11 +100,10 @@ class Bend(Transfer):
         Returns:
             None
         """
-        super().__init__(name)
+        super().__init__(name, diameter)
         self.angle = angle
         self.pipeLoss = pipeLoss
         self.costPer = costPer
-        self.diameter = diameter
     
     def calculateCost(self, *args):
         return self.costPer
@@ -129,6 +140,7 @@ class Node:
 class Layout:
     def __init__(self) -> None:
         self.head = Node(Pipe("INPUT PIPE", 0, 0, 0, 0), INITIAL_MASS_FLOW)
+        self.score = None
     
     def add(self, object, massFlow):
         start = self.head
@@ -191,16 +203,23 @@ class Layout:
             return self.checkDiameters(curr.getNextNode(), diam)
         
     def calculateLayoutCost(self):
-        start = self.head
+        curr = self.head
         cost = 0
-        while start:
-            cost += start.data.calculateCost(start.massFlow)
-            start = start.getNextNode()
+        while curr:
+            cost += curr.data.calculateCost(curr.massFlow)
+            curr = curr.getNextNode()
 
         return cost
     
     def calculatePower(self):
-        pass
+        curr = self.head
+        power = 0
+        while curr:
+            power += curr.data.calculatePower(height, massflow, density)
+    
+    def calculateScore(self):
+        self.score = 10
+        return True
 """
 # later I should add waste outputs
 a = Layout()
@@ -229,12 +248,31 @@ a.add(Pipe("Nice", 0.01, 55, 3.048, 0.15))
 
 
 # FERMENTERS [all possible Operators(""/)]
-[Operator("Scrap", "Fermenter", 320, 46600, 0.5, oC.fermenter), Operator("Average", "Fermenter", 380, 47200, 0.75, oC.fermenter),]
-[
+operators = [Operator("Scrap", "Fermenter", 320, 46600, 0.5, oC.fermenter), Operator("Average", "Fermenter", 380, 47200, 0.75, oC.fermenter),]
+pumps = [
     [Pump("Cheap", 200, 1, 6), Pump("Value", 200, 1, 6), Pump("Casdheap", 200, 1, 6)],
     [Pump("Cheap", 200, 1, 9), Pump("Value", 200, 1, 9), Pump("asd", 200, 1, 9)],
     
 ]
+bends = [Bend("asd", 90, 100, 23, 0.1), Bend("asd", 90, 100, 23, 0.1), Bend("asd", 90, 100, 23, 0.1)]
+
+
+generic = [operators, pumps, bends]
+transferDiameters = [.1, 0.13]
+lengths = tuple([len(i) for i in generic])
+
+shape = [lengths[i] for i in range(len(lengths))]
+
+allPossibleLayouts = np.zeros(lengths, dtype=np.object_)
+
+for idx in itertools.product(*[range(s) for s in shape]):
+    createdLayout = Layout()
+    currentMassFlow = createdLayout.head.massFlow
+    for genericIndex, partKey in enumerate(idx):
+        createdLayout.add(generic[genericIndex][partKey], massFlow=INITIAL_MASS_FLOW) # change later
+        
+    allPossibleLayouts[idx] = createdLayout
+
 
 # later I should add waste outputs
 a = Layout()
