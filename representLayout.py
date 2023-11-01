@@ -247,6 +247,33 @@ a.add(Pipe("Nice", 0.01, 55, 3.048, 0.15))
 
 
 
+def ferment():
+    fid = open('data/fermenters.csv', 'r')
+    header = fid.readline()
+    headers = header.strip().split(',')
+    rawData = fid.readLines()
+    data = [int(i.strip().split(',')) for i in rawData]
+    fid.close()
+    fermented = []
+    for i in range(0,data.length()):
+        fermented.append(Operator(headers[i],"Fermenter",data[0][i],data[1][i],data[2][i],oC.fermenter))
+    return fermented
+
+def pumps():
+    fid = open('data/pumps.csv','r')
+    header = fid.readline()
+    headers = header.strip().split(',')
+    rawData = fid.readLines()
+    data = [int(i.strip().split(,)) for i in rawData]
+    fid.close()
+    pumps = []
+    for i in range(1,data.length()):
+        temp = []
+        for j in range(1,data[i].length()):
+            temp.append(Pump(headers[j],data[i][j],)) 
+
+
+
 # FERMENTERS [all possible Operators(""/)]
 operators = [Operator("Scrap", "Fermenter", 320, 46600, 0.5, oC.fermenter), Operator("Average", "Fermenter", 380, 47200, 0.75, oC.fermenter),]
 pumps = [

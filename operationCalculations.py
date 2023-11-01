@@ -27,24 +27,46 @@ def fermenter(eff, sol):
     return sol
 
 def filt(eff, sol):
-    sol.sugar = sol.sugar
-    sol.fiber = sol.fiber * (1-eff)
-    sol.water = sol.water
-    sol.ethanol = sol.ethanol
+    totalMass = sol.sugar + sol.fiber + sol.water + sol.ethanol * 1
+    lostMass =  sol.fiber * eff
+    newMass = totalMass - lostMass
+    massSugar = sol.sugar
+    massFiber = sol.fiber * (1-eff)
+    massWater = sol.water
+    massEthanol = sol.ethanol
+    sol.sugar = massSugar/newMass
+    sol.fiber = massFiber/newMass
+    sol.Water = massWater/newMass
+    sol.Ethanol = massEthanol/newMass
     return sol
 
 
 def distiller(eff, sol):
-    sol.sugar = (sol.sugar * sol.ethanol * ((1/eff)-1))/(sol.water + sol.ethanol + sol.fiber)
-    sol.fiber = (sol.fiber * sol.ethanol * ((1/eff)-1))/(sol.water + sol.ethanol + sol.fiber)
-    sol.water = (sol.water * sol.ethanol * ((1/eff)-1))/(sol.water + sol.ethanol + sol.fiber)
-    sol.ethanol = sol.ethanol
+    totalMass = sol.sugar + sol.fiber + sol.water + sol.ethanol * 1
+    massSugar = (sol.sugar * sol.ethanol * ((1/eff)-1))/(sol.water + sol.ethanol + sol.fiber)
+    massFiber = (sol.fiber * sol.ethanol * ((1/eff)-1))/(sol.water + sol.ethanol + sol.fiber)
+    massWater = (sol.water * sol.ethanol * ((1/eff)-1))/(sol.water + sol.ethanol + sol.fiber)
+    massEthanol = sol.ethanol
+    lostMass = (sol.fiber - massFiber)+(sol.sugar - massSugar)+(sol.water-massWater)
+    newMass = totalMass - lostMass
+    sol.sugar = massSugar/newMass
+    sol.fiber = massFiber/newMass
+    sol.Water = massWater/newMass
+    sol.Ethanol = massEthanol/newMass
     return sol
 
 
 def dehydrator(eff, sol):
-    sol.sugar = sol.sugar
-    sol.fiber = sol.fiber
-    sol.water = sol.water * (1-eff)
-    sol.ethanol = sol.ethanol
+    totalMass = sol.sugar + sol.fiber + sol.water + sol.ethanol * 1
+    lostMass = sol.water * eff
+    newMass = totalMass - lostMass
+    massSugar = sol.sugar
+    massFiber = sol.fiber
+    massWater = sol.water * (1-eff)
+    massEthanol = sol.ethanol
+    sol.sugar = massSugar/newMass
+    sol.fiber = massFiber/newMass
+    sol.Water = massWater/newMass
+    sol.Ethanol = massEthanol/newMass
+    return sol
 
