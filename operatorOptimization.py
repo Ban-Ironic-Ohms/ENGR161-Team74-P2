@@ -18,9 +18,10 @@ pumpData = loadCSVData("data/pumps.csv")
 pumpEff = pumpData[:1,1:][0]
 pumpLen = [i[0] for i in pumpData[1:,:1]]
 pumpData = pumpData[1:,1:]
-print(pumpData)
 
 # maybe add a class for mpumps/pipes etc?
+
+# needs: a way to represent the layout
 
 class result:
     def __init__(self, ferm, dist, filt, dhyd, pump, eff=0, cost=0, power=0) -> None:
