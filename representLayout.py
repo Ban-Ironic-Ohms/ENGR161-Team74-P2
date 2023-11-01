@@ -50,6 +50,9 @@ class Transfer(Part):
     def __init__(self, name, diameter) -> None:
         super().__init__(name)
         self.diameter = diameter
+    
+    def __str__(self) -> str:
+        return f"diameter: {self.diameter}"
         
 class Pipe(Transfer):
     def __init__(self, name, darcyFrictionFactor, costM, length, diameter) -> None:
@@ -83,11 +86,10 @@ class Bend(Transfer):
         self.costPer = costPer
         self.diameter = diameter
     
-class Valve(Part):
+class Valve(Transfer):
     def __init__(self, name, flowCoef, costPer, diameter) -> None:
-        super().__init__(name)
+        super().__init__(name, diameter)
         self.costPer = costPer
-        self.diameter = diameter
         self.flowCoef = flowCoef
 
 # STRUCTURE RULES:
@@ -143,28 +145,35 @@ class Layout:
     def checkDiameters(self, start=None, diam=None):
         curr = start
         if not start:
+            # print("Starting the recursion with head")
             curr = self.head
+            
+        if curr.next == None:
+            # print("ENDING! We it works!")
+            return True
+        
+        # print(f"\nCalling func with start {curr.data.name} and diam {diam}")
         
         if not issubclass(type(curr.getNextNode().data), Transfer):
-            print("NOT A SUBCLASS")
-            if not issubclass(type(curr.data), Transfer):
-                self.checkDiameters(curr.getNextNode())
+            # print("The next node in the chain is not a sublcass. Skipping 2 fwrd")
+            return self.checkDiameters(curr.getNextNode().getNextNode())
+        
+        if not issubclass(type(curr.data), Transfer):
+            # print(f"THIS node {curr.data} is not a subclass({type(curr.data)} not Transfer). SKipping 1 fwrd")
+            return self.checkDiameters(curr.getNextNode())
             
-
+        # at this point, this node and the next node are subclasses
         
         if not diam:
             diam = curr.data.diameter
-        
-        if curr.next == None:
-            print("CASE 1")
-            return True
-        elif diam != curr.next.data.diameter:
-            print("CASE 2")
             
+        # print(f"Diam: {diam}")
+        if diam != curr.getNextNode().data.diameter:
+            # print("CASE 2")   
             return False
         else:
             return self.checkDiameters(curr.getNextNode(), diam)
-        
+"""
 # later I should add waste outputs
 a = Layout()
 a.add(Pump("Premium", 415, 6, 0.92)) # NOTE: we will have to forward calculate the necessary effective elevation gain (similar to how we calculate if the sequential diamteres work)
@@ -187,6 +196,30 @@ a.add(Operator("Average", "Dehydrator", 240, 49536, 0.75, oC.dehydrator))
 a.add(Valve("Salvage", 800, 26, 0.15))
 a.add(Pipe("Nice", 0.01, 55, 3.048, 0.15)) 
 # END!
+"""
 
+
+# later I should add waste outputs
+a = Layout()
+a.add(Pump("Pump1", 415, 6, 0.92)) # NOTE: we will have to forward calculate the necessary effective elevation gain (similar to how we calculate if the sequential diamteres work)
+a.add(Pipe("Pipe2", 0.002, 2.97, 0, 0.1))
+a.add(Operator("OP3", "Fermenter", 380, 47200, 0.75, oC.fermenter))
+a.add(Valve("Valve4", 800, 1, 0.1))
+a.add(Pipe("Pipe5", 0.01, 2.16, 1.524, 0.1))
+a.add(Valve("Valve6", 800, 1, 0.1))
+a.add(Operator("Op7", "Filtration", 240, 49536, 0.75, oC.filt))
+a.add(Valve("Valvu8", 800, 1, 0.1))
+a.add(Pump("Pump9", 415, 6, 0.92))
+a.add(Pipe("Pipe10", 0.01, 2.16, 3.048, 0.1))
+a.add(Valve("Valve11", 800, 1, 0.1))
+a.add(Operator("Op12", "Distiller", 460, 47812, 0.9, oC.distiller))
+a.add(Valve("Valve13", 800, 26, 0.15))
+a.add(Pump("Pump14", 415, 6, 0.92))
+a.add(Pipe("Pip15", 0.01, 55, 3.048, 0.15)) #change 0.15 -> 0.1 to check the checkDiamter func
+a.add(Valve("Valve16", 800, 26, 0.15))
+a.add(Operator("Op17", "Dehydrator", 240, 49536, 0.75, oC.dehydrator))
+a.add(Valve("Valve18", 800, 26, 0.15))
+a.add(Pipe("Pip19", 0.01, 55, 3.048, 0.15)) 
+# END!
 print(a.printList())
 print(a.checkDiameters())
