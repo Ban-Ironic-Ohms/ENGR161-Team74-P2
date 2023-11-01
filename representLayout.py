@@ -228,10 +228,37 @@ a.add(Pipe("Nice", 0.01, 55, 3.048, 0.15))
 
 
 
+def ferment():
+    fid = open('data/fermenters.csv', 'r')
+    header = fid.readline()
+    headers = header.strip().split(',')
+    rawData = fid.readLines()
+    data = [int(i.strip().split(',')) for i in rawData]
+    fid.close()
+    fermented = []
+    for i in range(0,data.length()):
+        fermented.append(Operator(headers[i],"Fermenter",data[0][i],data[1][i],data[2][i],oC.fermenter))
+    return fermented
+
+def pumps():
+    fid = open('data/pumps.csv','r')
+    header = fid.readline()
+    headers = header.strip().split(',')
+    rawData = fid.readLines()
+    data = [int(i.strip().split(,)) for i in rawData]
+    fid.close()
+    pumps = []
+    for i in range(1,data.length()):
+        temp = []
+        for j in range(1,data[i].length()):
+            temp.append(Pump(headers[j],data[i][j],)) 
+
+
+
 # FERMENTERS [all possible Operators(""/)]
 [Operator("Scrap", "Fermenter", 320, 46600, 0.5, oC.fermenter), Operator("Average", "Fermenter", 380, 47200, 0.75, oC.fermenter),]
 [
-    [Pump("Cheap", 200, 1, 6), Pump("Value", 200, 1, 6), Pump("Casdheap", 200, 1, 6)],
+    [Pump("Cheap", 200, 6, 0.8), Pump("Value", 200, 1, 6), Pump("Standard", 200, 1, 6), Pump("High Grade", 200, 1, 6), Pump("Premium", 200, 1, 6)],
     [Pump("Cheap", 200, 1, 9), Pump("Value", 200, 1, 9), Pump("asd", 200, 1, 9)],
     
 ]
