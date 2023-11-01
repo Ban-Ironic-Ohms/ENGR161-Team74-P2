@@ -20,16 +20,15 @@
 
 # superclass for the "important peices"
 
+
 import operationCalculations as oC
+
+INITIAL_MASS_FLOW = 100
 
 class Part():
     def __init__(self, name) -> None:
         self.name = name
         
-        # these are used for the linked list
-        self.next = None
-        self.waste = None
-
 class Operator(Part):
     def __init__(self, name, opType, costM3pH, power, eff, solnFunc) -> None:
         super().__init__(name)
@@ -38,6 +37,9 @@ class Operator(Part):
         self.eff = eff
         self.costM3pH = costM3pH
         self.solnFunc = solnFunc
+    
+    def calculateCost(self, massFlow):
+        return self.costM3pH * massFlow
         
 class Pump(Part):
     def __init__(self, name, costM3pH, profRating, eff) -> None:
@@ -45,6 +47,9 @@ class Pump(Part):
         self.profRating = profRating
         self.eff = eff
         self.costM3pH = costM3pH
+    
+    def calculateCost(self, massFlow):
+        return self.costM3pH * massFlow
         
 class Transfer(Part):
     def __init__(self, name, diameter) -> None:
@@ -60,6 +65,9 @@ class Pipe(Transfer):
         self.costM = costM
         self.eff = darcyFrictionFactor
         self.length = length
+    
+    def calculateCost(self, *args):
+        return self.length * self.costM
     
 class Duct(Pipe):
     def __init__(self, name, costM, length, diameter) -> None:
@@ -86,11 +94,17 @@ class Bend(Transfer):
         self.costPer = costPer
         self.diameter = diameter
     
+    def calculateCost(self, *args):
+        return self.costPer
+    
 class Valve(Transfer):
     def __init__(self, name, flowCoef, costPer, diameter) -> None:
         super().__init__(name, diameter)
         self.costPer = costPer
         self.flowCoef = flowCoef
+    
+    def calculateCost(self, *args):
+        return self.costPer
 
 # STRUCTURE RULES:
 # 1) each operator must have a valve on its inlet and outlet
@@ -100,9 +114,11 @@ class Valve(Transfer):
 # https://github.com/M2skills/Linked-List-in-Python/blob/master/LinkedList.py
 
 class Node:
-    def __init__(self, data=None) -> None:
+    def __init__(self, data=None, massFlow = 0) -> None:
         self.data = data
+        self.massFlow = massFlow
         self.next = None
+        self.waste = None
     
     def getNextNode(self):
         return self.next
@@ -112,11 +128,11 @@ class Node:
         
 class Layout:
     def __init__(self) -> None:
-        self.head = Node(Pipe("INPUT PIPE", 0, 0, 0, 0))
+        self.head = Node(Pipe("INPUT PIPE", 0, 0, 0, 0), INITIAL_MASS_FLOW)
     
-    def add(self, object):
+    def add(self, object, massFlow):
         start = self.head
-        tempNode = Node(object)
+        tempNode = Node(object, massFlow)
         while start.getNextNode():
             start = start.getNextNode()
         start.setNext(tempNode)
@@ -173,6 +189,18 @@ class Layout:
             return False
         else:
             return self.checkDiameters(curr.getNextNode(), diam)
+        
+    def calculateLayoutCost(self):
+        start = self.head
+        cost = 0
+        while start:
+            cost += start.data.calculateCost(start.massFlow)
+            start = start.getNextNode()
+
+        return cost
+    
+    def calculatePower(self):
+        pass
 """
 # later I should add waste outputs
 a = Layout()
@@ -199,27 +227,38 @@ a.add(Pipe("Nice", 0.01, 55, 3.048, 0.15))
 """
 
 
+
+# FERMENTERS [all possible Operators(""/)]
+[Operator("Scrap", "Fermenter", 320, 46600, 0.5, oC.fermenter), Operator("Average", "Fermenter", 380, 47200, 0.75, oC.fermenter),]
+[
+    [Pump("Cheap", 200, 1, 6), Pump("Value", 200, 1, 6), Pump("Casdheap", 200, 1, 6)],
+    [Pump("Cheap", 200, 1, 9), Pump("Value", 200, 1, 9), Pump("asd", 200, 1, 9)],
+    
+]
+
 # later I should add waste outputs
 a = Layout()
-a.add(Pump("Pump1", 415, 6, 0.92)) # NOTE: we will have to forward calculate the necessary effective elevation gain (similar to how we calculate if the sequential diamteres work)
-a.add(Pipe("Pipe2", 0.002, 2.97, 0, 0.1))
-a.add(Operator("OP3", "Fermenter", 380, 47200, 0.75, oC.fermenter))
-a.add(Valve("Valve4", 800, 1, 0.1))
-a.add(Pipe("Pipe5", 0.01, 2.16, 1.524, 0.1))
-a.add(Valve("Valve6", 800, 1, 0.1))
-a.add(Operator("Op7", "Filtration", 240, 49536, 0.75, oC.filt))
-a.add(Valve("Valve8", 800, 1, 0.1))
-a.add(Pump("Pump9", 415, 6, 0.92))
-a.add(Pipe("Pipe10", 0.01, 2.16, 3.048, 0.1))
-a.add(Valve("Valve11", 800, 1, 0.1))
-a.add(Operator("Op12", "Distiller", 460, 47812, 0.9, oC.distiller))
-a.add(Valve("Valve13", 800, 26, 0.15))
-a.add(Pump("Pump14", 415, 6, 0.92))
-a.add(Pipe("Pip15", 0.01, 55, 3.048, 0.15)) #change 0.15 -> 0.1 to check the checkDiamter func
-a.add(Valve("Valve16", 800, 26, 0.15))
-a.add(Operator("Op17", "Dehydrator", 240, 49536, 0.75, oC.dehydrator))
-a.add(Valve("Valve18", 800, 26, 0.15))
-a.add(Pipe("Pip19", 0.01, 55, 3.048, 0.15)) 
+a.add(Pump("Pump1", 415, 6, 0.92), 10) # NOTE: we will have to forward calculate the necessary effective elevation gain (similar to how we calculate if the sequential diamteres work)
+a.add(Pipe("Pipe2", 0.002, 2.97, 0, 0.1), 10)
+a.add(Operator("OP3", "Fermenter", 380, 47200, 0.75, oC.fermenter), 10)
+a.add(Valve("Valve4", 800, 1, 0.1), 10)
+a.add(Pipe("Pipe5", 0.01, 2.16, 1.524, 0.1), 10)
+a.add(Valve("Valve6", 800, 1, 0.1), 10)
+a.add(Operator("Op7", "Filtration", 240, 49536, 0.75, oC.filt), 10)
+a.add(Valve("Valve8", 800, 1, 0.1), 10)
+a.add(Pump("Pump9", 415, 6, 0.92), 10)
+a.add(Pipe("Pipe10", 0.01, 2.16, 3.048, 0.1), 10)
+a.add(Valve("Valve11", 800, 1, 0.1), 10)
+a.add(Operator("Op12", "Distiller", 460, 47812, 0.9, oC.distiller), 10)
+a.add(Valve("Valve13", 800, 26, 0.15), 10)
+a.add(Pump("Pump14", 415, 6, 0.92), 10)
+a.add(Pipe("Pip15", 0.01, 55, 3.048, 0.15), 10) #change 0.15 -> 0.1 to check the checkDiamter func
+a.add(Valve("Valve16", 800, 26, 0.15), 10)
+a.add(Operator("Op17", "Dehydrator", 240, 49536, 0.75, oC.dehydrator), 10)
+a.add(Valve("Valve18", 800, 26, 0.15), 10)
+a.add(Pipe("Pip19", 0.01, 55, 3.048, 0.15), 10) 
 # END!
 print(a.printList())
 print(a.checkDiameters())
+print(a.calculateLayoutCost())
+

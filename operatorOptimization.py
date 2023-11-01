@@ -15,10 +15,12 @@ def loadCSVData(filepath):
     
 opsData = loadJSONData("data/operators.json")
 pumpData = loadCSVData("data/pumps.csv")
+print(pumpData)
 pumpEff = pumpData[:1,1:][0]
 pumpLen = [i[0] for i in pumpData[1:,:1]]
 pumpData = pumpData[1:,1:]
 
+# print(pumpData)
 # maybe add a class for mpumps/pipes etc?
 
 # needs: a way to represent the layout
@@ -127,6 +129,6 @@ for ferm in range(4):
 
 
 
-print(results.flatten()[np.argmax(results)])
+# print(results.flatten()[np.argmax(results)])
 
-print(f"{round(time.time() - start, 5)} seconds")
+# print(f"{round(time.time() - start, 5)} seconds")
