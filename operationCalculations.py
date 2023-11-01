@@ -5,6 +5,7 @@ class Solution:
         self.sugar = sugar
         self.ethanol = ethanol
 
+waste = 0 #measured in % mass of original value. 
 #class waste(solution):
 #   def __init__(self) -> None:
 #      super().__init__()
@@ -12,10 +13,17 @@ class Solution:
 
 
 def fermenter(eff, sol):
-    sol.sugar = sol.sugar * (1 - eff)
-    sol.fiber = sol.fiber
-    sol.water = sol.water
-    sol.ethanol = sol.sugar * eff
+    totalMass = sol.sugar+sol.fiber+sol.water+sol.ethanol * 1
+    lostMass = sol.sugar * 0.49
+    newMass = totalMass - lostMass
+    massSugar = sol.sugar * (1 - eff)
+    massFiber = sol.fiber
+    massWater = sol.water
+    massEthanol = sol.sugar * eff * 0.51
+    sol.sugar = massSugar/newMass
+    sol.fiber = massFiber/newMass
+    sol.Water = massWater/newMass
+    sol.Ethanol = massEthanol/newMass
     return sol
 
 def filt(eff, sol):
