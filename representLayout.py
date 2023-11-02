@@ -275,8 +275,8 @@ def pumps():
     pumps = []
     for i in range(1, len(data)):
         temp = []
-        for j in range(1, len(data[i])):
-            temp.append(Pump(headers[j], data[i][j], )) 
+        for j in range(1,data[i].length()):
+            temp.append(Pump(headers[j],data[i][j],)) 
 
 
 
