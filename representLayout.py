@@ -25,12 +25,13 @@ import operationCalculations as oC
 import numpy as np
 import itertools
 
-INITIAL_MASS_FLOW = 100
+INITIAL_MASS_FLOW = oC.Solution(60, 20, 20, 0)
 GRAVITY = 9.81
 
 class Part():
     def __init__(self, name) -> None:
         self.name = name
+
         
 class Operator(Part):
     def __init__(self, name, opType, costM3pH, power, eff, solnFunc) -> None:
@@ -40,6 +41,9 @@ class Operator(Part):
         self.eff = eff
         self.costM3pH = costM3pH
         self.solnFunc = solnFunc
+        
+    def solveMass(self, massFlow):
+        return self.solnFunc(self.eff, massFlow)
     
     def calculateCost(self, massFlow):
         return self.costM3pH * massFlow
@@ -202,7 +206,7 @@ class Layout:
         else:
             return self.checkDiameters(curr.getNextNode(), diam)
         
-    def calculateLayoutCost(self):
+    def layoutCost(self):
         curr = self.head
         cost = 0
         while curr:
@@ -211,11 +215,13 @@ class Layout:
 
         return cost
     
-    def calculatePower(self):
+    def layoutPower(self):
         curr = self.head
         power = 0
         while curr:
             power += curr.data.calculatePower(height, massflow, density)
+            
+    def layoutEffective
     
     def calculateScore(self):
         self.score = 10
@@ -251,55 +257,64 @@ def ferment():
     fid = open('data/fermenters.csv', 'r')
     header = fid.readline()
     headers = header.strip().split(',')
-    rawData = fid.readLines()
-    data = [int(i.strip().split(',')) for i in rawData]
+    rawData = fid.readlines()
     fid.close()
+    data = [i.strip().split(',') for i in rawData] # can't cast to int because i.split() gives a list
     fermented = []
-    for i in range(0,data.length()):
-        fermented.append(Operator(headers[i],"Fermenter",data[0][i],data[1][i],data[2][i],oC.fermenter))
+    for i in range(len(data)):
+        fermented.append(Operator(headers[i], "Fermenter", float(data[0][i]), float(data[1][i]), float(data[2][i]), oC.fermenter))
     return fermented
 
 def pumps():
-    fid = open('data/pumps.csv','r')
+    fid = open('data/pumps.csv', 'r')
     header = fid.readline()
     headers = header.strip().split(',')
-    rawData = fid.readLines()
-    data = [int(i.strip().split(,)) for i in rawData]
+    rawData = fid.readlines()
+    data = [i.strip().split(",") for i in rawData]
     fid.close()
     pumps = []
-    for i in range(1,data.length()):
+    for i in range(1, len(data)):
         temp = []
-        for j in range(1,data[i].length()):
-            temp.append(Pump(headers[j],data[i][j],)) 
+        for j in range(1, len(data[i])):
+            temp.append(Pump(headers[j], data[i][j], )) 
 
 
 
 # FERMENTERS [all possible Operators(""/)]
 operators = [Operator("Scrap", "Fermenter", 320, 46600, 0.5, oC.fermenter), Operator("Average", "Fermenter", 380, 47200, 0.75, oC.fermenter),]
-pumps = [
+pumps1 = [
     [Pump("Cheap", 200, 1, 6), Pump("Value", 200, 1, 6), Pump("Casdheap", 200, 1, 6)],
-    [Pump("Cheap", 200, 1, 9), Pump("Value", 200, 1, 9), Pump("asd", 200, 1, 9)],
-    
+    [Pump("Cheap", 200, 1, 9), Pump("Value", 200, 1, 9), Pump("asd", 200, 1, 9)],   
 ]
 bends = [Bend("asd", 90, 100, 23, 0.1), Bend("asd", 90, 100, 23, 0.1), Bend("asd", 90, 100, 23, 0.1)]
 
 
-generic = [operators, pumps, bends]
+generic = [ferment(), pumps1, bends]
 transferDiameters = [.1, 0.13]
-lengths = tuple([len(i) for i in generic])
 
-shape = [lengths[i] for i in range(len(lengths))]
+def generateLayoutSpace(generic, transferDiameters):
+    lengths = tuple([len(i) for i in generic])
 
-allPossibleLayouts = np.zeros(lengths, dtype=np.object_)
+    shape = [lengths[i] for i in range(len(lengths))]
 
-for idx in itertools.product(*[range(s) for s in shape]):
-    createdLayout = Layout()
-    currentMassFlow = createdLayout.head.massFlow
-    for genericIndex, partKey in enumerate(idx):
-        createdLayout.add(generic[genericIndex][partKey], massFlow=INITIAL_MASS_FLOW) # change later
+    allPossibleLayouts = np.zeros(lengths, dtype=np.object_)
+
+    for idx in itertools.product(*[range(s) for s in shape]):
+        createdLayout = Layout()
+        currentMassFlow = createdLayout.head.massFlow
         
-    allPossibleLayouts[idx] = createdLayout
+        for genericIndex, partKey in enumerate(idx):
+            partToAdd = generic[genericIndex][partKey]
+            if issubclass(type(partToAdd), Operator):
+                currentMassFlow = partToAdd.solveMass(currentMassFlow)
+            createdLayout.add(generic[genericIndex][partKey], currentMassFlow) 
+            
+        allPossibleLayouts[idx] = createdLayout
 
+    return allPossibleLayouts
+
+layoutSpace = generateLayoutSpace(generic, transferDiameters)
+print(layoutSpace)
 
 # later I should add waste outputs
 a = Layout()
@@ -325,5 +340,5 @@ a.add(Pipe("Pip19", 0.01, 55, 3.048, 0.15), 10)
 # END!
 print(a.printList())
 print(a.checkDiameters())
-print(a.calculateLayoutCost())
+print(a.layoutCost())
 
