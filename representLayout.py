@@ -264,7 +264,7 @@ def ferment():
     fid.close()
     data = [i.strip().split(',') for i in rawData] # can't cast to int because i.split() gives a list
     fermented = []
-    for i in range(len(data)):
+    for i in range(len(data[i])):
         fermented.append(Operator(headers[i], "Fermenter", float(data[0][i]), float(data[1][i]), float(data[2][i]), oC.fermenter))
     return fermented
 
