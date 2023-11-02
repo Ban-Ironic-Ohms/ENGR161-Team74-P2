@@ -1,9 +1,12 @@
 class Solution:
-    def __init__(self, water, fiber, sugar,ethanol) -> None:
-        self.water = water
-        self.fiber = fiber
-        self.sugar = sugar
-        self.ethanol = ethanol
+    def __init__(self, initialMass) -> None:
+        self.water = initialMass * 0.6 # in kg
+        self.fiber = initialMass * 0.2 # in kg
+        self.sugar = initialMass * 0.2 # in kg
+        self.ethanol = 0 # in kg
+        
+    def mass(self):
+        return sum([self.water, self.fiber, self.sugar, self.ethanol])
 
 waste = 0 #measured in % mass of original value. 
 #class waste(solution):
