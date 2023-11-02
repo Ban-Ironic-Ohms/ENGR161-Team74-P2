@@ -286,7 +286,7 @@ def pumps():
 
 operators = [Operator("Scrap", "Fermenter", 320, 46600, 0.5, oC.fermenter), Operator("Average", "Fermenter", 380, 47200, 0.75, oC.fermenter),]
 pumps1 = [
-    [Pump("Cheap", 200, 6,), Pump("Value", 200, 1, 6), Pump("Casdheap", 200, 1, 6)],
+    [Pump("Cheap", 200, 6, 1), Pump("Value", 200, 1, 6), Pump("Casdheap", 200, 1, 6)],
     [Pump("Cheap", 200, 1, 9), Pump("Value", 200, 1, 9), Pump("asd", 200, 1, 9)],   
 ]
 bends = [Bend("asd", 90, 100, 23, 0.1), Bend("asd", 90, 100, 23, 0.1), Bend("asd", 90, 100, 23, 0.1)]
