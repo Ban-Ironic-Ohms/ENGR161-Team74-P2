@@ -265,7 +265,7 @@ def ferment():
     fid.close()
     data = [i.strip().split(',') for i in rawData] # can't cast to int because i.split() gives a list
     fermented = []
-    for i in range(len(data)):
+    for i in range(len(data[i])):
         fermented.append(Operator(headers[i], "Fermenter", float(data[0][i]), float(data[1][i]), float(data[2][i]), oC.fermenter))
     return fermented
 
@@ -280,13 +280,14 @@ def pumps():
     for i in range(1, len(data)):
         temp = []
         for j in range(1,data[i].length()):
-            temp.append(Pump(headers[j],data[i][j],)) 
-
+            temp.append(Pump(headers[j],float(data[i][j]),float(data[i][0]),int(data[0][j]))) 
+        pumps.append(temp)
+    return pumps
 
 
 operators = [Operator("Scrap", "Fermenter", 320, 46600, 0.5, oC.fermenter), Operator("Average", "Fermenter", 380, 47200, 0.75, oC.fermenter),]
 pumps1 = [
-    [Pump("Cheap", 200, 1, 6), Pump("Value", 200, 1, 6), Pump("Casdheap", 200, 1, 6)],
+    [Pump("Cheap", 200, 6, 1), Pump("Value", 200, 1, 6), Pump("Casdheap", 200, 1, 6)],
     [Pump("Cheap", 200, 1, 9), Pump("Value", 200, 1, 9), Pump("asd", 200, 1, 9)],   
 ]
 bends = [Bend("asd", 90, 100, 23, 0.1), Bend("asd", 90, 100, 23, 0.1), Bend("asd", 90, 100, 23, 0.1)]
