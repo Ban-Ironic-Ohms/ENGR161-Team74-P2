@@ -17,6 +17,9 @@ class Solution:
         density += (self.sugar / mass) * 1552 # from https://wiki.anton-paar.com/us-en/density-and-density-measurement/sucrose-density/
         density += (self.ethanol / mass) * 779 # from https://pubchem.ncbi.nlm.nih.gov/compound/Ethanol#section=Experimental-Properties
         
+        return density
+    def __str__(self) -> str:
+        return f"{self.water}kg water, {self.fiber}kg fiber, {self.sugar}kg sugar, {self.ethanol}kg ethanol with total mass {self.mass()} and density {self.density()}"
 
 waste = 0 #measured in % mass of original value. 
 #class waste(solution):
@@ -24,19 +27,14 @@ waste = 0 #measured in % mass of original value.
 #      super().__init__()
 #     self.state = solid lq, gas
 
-
+# TODO for Mitch -- change these so that they work DIRECTLY with masses
+# this is an example -- we dont need lostMass, and dont need to divide by
+# 'newMass' 
 def fermenter(eff, sol):
-    totalMass = sol.sugar+sol.fiber+sol.water+sol.ethanol * 1
-    lostMass = sol.sugar * 0.49
-    newMass = totalMass - lostMass
-    massSugar = sol.sugar * (1 - eff)
-    massFiber = sol.fiber
-    massWater = sol.water
-    massEthanol = sol.sugar * eff * 0.51
-    sol.sugar = massSugar/newMass
-    sol.fiber = massFiber/newMass
-    sol.Water = massWater/newMass
-    sol.Ethanol = massEthanol/newMass
+    sol.ethanol += sol.sugar * eff * 0.51 # also note that with this implimentation, the ethanol math needs to happen first otherwise the ethanol will be based off reduced sugar
+    sol.sugar = sol.sugar * (1 - eff)
+    sol.fiber = sol.fiber
+    sol.water = sol.water
     return sol
 
 def filt(eff, sol):
@@ -49,8 +47,8 @@ def filt(eff, sol):
     massEthanol = sol.ethanol
     sol.sugar = massSugar/newMass
     sol.fiber = massFiber/newMass
-    sol.Water = massWater/newMass
-    sol.Ethanol = massEthanol/newMass
+    sol.water = massWater/newMass
+    sol.ethanol = massEthanol/newMass
     return sol
 
 
@@ -64,8 +62,8 @@ def distiller(eff, sol):
     newMass = totalMass - lostMass
     sol.sugar = massSugar/newMass
     sol.fiber = massFiber/newMass
-    sol.Water = massWater/newMass
-    sol.Ethanol = massEthanol/newMass
+    sol.water = massWater/newMass
+    sol.ethanol = massEthanol/newMass
     return sol
 
 
@@ -79,7 +77,7 @@ def dehydrator(eff, sol):
     massEthanol = sol.ethanol
     sol.sugar = massSugar/newMass
     sol.fiber = massFiber/newMass
-    sol.Water = massWater/newMass
-    sol.Ethanol = massEthanol/newMass
+    sol.water = massWater/newMass
+    sol.ethanol = massEthanol/newMass
     return sol
 

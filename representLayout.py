@@ -64,7 +64,7 @@ class Pump(Part):
         return self.costM3pH * massFlow.mass()
     
     def calculatePower(self, height, massFlow, density): # returns kJ per day
-        return self.eff * height * GRAVITY * massFlow * density * 24 * 1/1000
+        return self.eff * height * GRAVITY * massFlow.mass() * density * 24 * 1/1000
     
 class Transfer(Part):
     def __init__(self, name, diameter) -> None:
@@ -89,7 +89,6 @@ class Pipe(Transfer):
 
     # built on Darcy-Weisbach Equn from slides
     def headLoss(self, massFlow):
-        print(f"{self.name}, {massFlow} is type {type(massFlow)}")
         return self.eff * (8 * massFlow.mass()**2 * self.length) * (1 / (math.pi**2 * GRAVITY * self.diameter**5))
     
 class Duct(Pipe):
@@ -158,7 +157,7 @@ class Node:
         
 class Layout:
     def __init__(self, staticHead) -> None:
-        self.head = Node(Pipe("INPUT PIPE", 0, 0, 0, 1), INITIAL_MASS_FLOW) # initial diam = 1 because otherwise it breaks
+        self.head = Node(Pipe("INPUT PIPE", 0, 0, 0, 1), oC.Solution(100)) # initial diam = 1 because otherwise it breaks
         self.staticHead = staticHead
         self.score = None
     
@@ -188,7 +187,6 @@ class Layout:
                 finalString += " -- "
 
         return finalString
-    
     
     def checkDiameters(self, start=None, diam=None):
         curr = start
@@ -235,7 +233,7 @@ class Layout:
         curr = self.head
         power = 0
         while curr:
-            power += curr.data.calculatePower(self.layoutEffectiveHead(), curr.massFlow, density)
+            power += curr.data.calculatePower(self.layoutEffectiveHead(), curr.massFlow, curr.massFlow.density())
             curr = curr.getNextNode()
         
         return power
@@ -251,7 +249,7 @@ class Layout:
         
         return head
     
-    def calculateScore(self):
+    def layoutScore(self):
         self.score = 10
         return True
 
@@ -265,7 +263,7 @@ def ferment():
     fid.close()
     data = [i.strip().split(',') for i in rawData] # can't cast to int because i.split() gives a list
     fermented = []
-    for i in range(len(data[i])):
+    for i in range(len(data[0])):
         fermented.append(Operator(headers[i], "Fermenter", float(data[0][i]), float(data[1][i]), float(data[2][i]), oC.fermenter))
     return fermented
 
@@ -286,14 +284,15 @@ def pumps():
 
 
 operators = [Operator("Scrap", "Fermenter", 320, 46600, 0.5, oC.fermenter), Operator("Average", "Fermenter", 380, 47200, 0.75, oC.fermenter),]
-pumps1 = [
-    [Pump("Cheap", 200, 6, 1), Pump("Value", 200, 1, 6), Pump("Casdheap", 200, 1, 6)],
-    [Pump("Cheap", 200, 1, 9), Pump("Value", 200, 1, 9), Pump("asd", 200, 1, 9)],   
-]
-bends = [Bend("asd", 90, 100, 23, 0.1), Bend("asd", 90, 100, 23, 0.1), Bend("asd", 90, 100, 23, 0.1)]
+pumps1 = [Pump("Cheap", 260, 6, 1), Pump("Value", 200, 1, 6), Pump("Casdheap", 200, 1, 6)]
+    # [Pump("Cheap", 200, 1, 9), Pump("Value", 200, 1, 9), Pump("asd", 200, 1, 9)],   
+# ]
+bends = [Bend("120", 90, 120, 23, 0.1), Bend("100", 90, 100, 23, 0.1), Bend("80", 90, 80, 23, 0.1)]
 
-print(ferment())
+# print(ferment())
+# print(pumps())
 generic = [ferment(), pumps1, bends]
+generic = [ferment() for i in range(4)]
 transferDiameters = [.1, 0.13]
 
 def generateLayoutSpace(generic, transferDiameters, staticHead):
@@ -304,13 +303,19 @@ def generateLayoutSpace(generic, transferDiameters, staticHead):
     allPossibleLayouts = np.zeros(lengths, dtype=np.object_)
 
     for idx in itertools.product(*[range(s) for s in shape]):
+        print("NEW LAYOUT")
         createdLayout = Layout(staticHead)
         currentMassFlow = createdLayout.head.massFlow
+        print(currentMassFlow)
         
+        time.sleep(0.1)
         for genericIndex, partKey in enumerate(idx):
             partToAdd = generic[genericIndex][partKey]
             if issubclass(type(partToAdd), Operator):
+                # print("applying a fermenter to soln")
                 currentMassFlow = partToAdd.solveMass(currentMassFlow)
+                print(currentMassFlow)
+                # time.sleep(1)
             createdLayout.add(generic[genericIndex][partKey], currentMassFlow) 
             
         allPossibleLayouts[idx] = createdLayout
@@ -323,7 +328,15 @@ layoutSpace = generateLayoutSpace(generic, transferDiameters, 100000)
 start = time.time()
 
 for layout in layoutSpace.flatten():
-    layout.layoutEffectiveHead()
+    print(layout.printList())
+    print("POWER", layout.layoutPower())
+    print("HEAD", layout.layoutEffectiveHead())
+    print("COST", layout.layoutCost())
+    # print("DIAMETER CHECK:", layout.checkDiameters())
+    print("")
+    pass
+    
+print(f"run took {time.time() - start} sec")
 
 """
 # later I should add waste outputs
