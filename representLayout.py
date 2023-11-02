@@ -25,6 +25,7 @@ import operationCalculations as oC
 import numpy as np
 import itertools
 import math
+import time
 
 INITIAL_MASS_FLOW = oC.Solution(100)
 GRAVITY = 9.81
@@ -290,7 +291,7 @@ pumps1 = [
 ]
 bends = [Bend("asd", 90, 100, 23, 0.1), Bend("asd", 90, 100, 23, 0.1), Bend("asd", 90, 100, 23, 0.1)]
 
-
+print(ferment())
 generic = [ferment(), pumps1, bends]
 transferDiameters = [.1, 0.13]
 
@@ -316,8 +317,14 @@ def generateLayoutSpace(generic, transferDiameters, staticHead):
     return allPossibleLayouts
 
 layoutSpace = generateLayoutSpace(generic, transferDiameters, 100000)
-print(layoutSpace)
+# print(layoutSpace)
 
+start = time.time()
+
+for layout in layoutSpace.flatten():
+    layout.layoutEffectiveHead()
+
+"""
 # later I should add waste outputs
 a = Layout(10)
 a.add(Pump("Pump1", 415, 6, 0.92), INITIAL_MASS_FLOW) # NOTE: we will have to forward calculate the necessary effective elevation gain (similar to how we calculate if the sequential diamteres work)
@@ -344,3 +351,4 @@ print(a.printList())
 print(a.checkDiameters())
 print(a.layoutCost())
 print(a.layoutEffectiveHead())
+"""

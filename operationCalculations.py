@@ -8,6 +8,16 @@ class Solution:
     def mass(self):
         return sum([self.water, self.fiber, self.sugar, self.ethanol])
 
+    # using aproximation outlined in slides
+    def density(self):
+        density = 0
+        mass = self.mass()
+        density += (self.water / mass) * 998 # from https://www.usgs.gov/special-topics/water-science-school/science/water-density at 70F
+        density += (self.fiber / mass) * 381 # from https://www.aqua-calc.com/page/density-table/substance/all-blank-bran-coma-and-blank-a-blank-wheat-blank-bran-blank-fiber-blank-cereal-coma-and-blank-upc-column--blank-038000013027
+        density += (self.sugar / mass) * 1552 # from https://wiki.anton-paar.com/us-en/density-and-density-measurement/sucrose-density/
+        density += (self.ethanol / mass) * 779 # from https://pubchem.ncbi.nlm.nih.gov/compound/Ethanol#section=Experimental-Properties
+        
+
 waste = 0 #measured in % mass of original value. 
 #class waste(solution):
 #   def __init__(self) -> None:
