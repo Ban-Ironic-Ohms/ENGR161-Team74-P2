@@ -1,9 +1,17 @@
 class Solution:
     def __init__(self, initialMFR) -> None:
+        """
+        Initilizer
+        
+        Args:
+            initialMFR (float): the mass flow rate in m^3/h of the initial solution
+        """
         self.water = initialMFR * 0.6 # in m^3 / h
         self.fiber = initialMFR * 0.2 # in m^3 / h
         self.sugar = initialMFR * 0.2 # in m^3 / h
         self.ethanol = 0 # in m^3 / h
+        
+        print(self)
         
     def massFlowRate(self):
         return sum([self.water, self.fiber, self.sugar, self.ethanol])
@@ -18,9 +26,13 @@ class Solution:
         density += (self.ethanol / mass) * 779 # from https://pubchem.ncbi.nlm.nih.gov/compound/Ethanol#section=Experimental-Properties
         
         return density
+    
     def __str__(self) -> str:
         return f"{self.water:.4f}m^3/h water, {self.fiber:.4f}m^3/h fiber, {self.sugar:.4f}m^3/h sugar, {self.ethanol:.4f}m^3/h ethanol with total mass {self.massFlowRate():.4f} and density {self.density():.4f}"
 
+    def ethanolConcentration(self):
+        return self.ethanol / self.massFlowRate()
+        
 waste = 0 #measured in % mass of original value. 
 #class waste(solution):
 #   def __init__(self) -> None:

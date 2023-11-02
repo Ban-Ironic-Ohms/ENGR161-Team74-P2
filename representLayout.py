@@ -25,7 +25,7 @@ import itertools
 import math
 import time
 
-INITIAL_MASS_FLOW = oC.Solution(100)
+# INITIAL_MASS_FLOW = oC.Solution(100000)
 GRAVITY = 9.81
 
 class Part():
@@ -155,7 +155,8 @@ class Node:
         
 class Layout:
     def __init__(self, staticHead) -> None:
-        self.head = Node(Pipe("INPUT PIPE", 0, 0, 0, 1), oC.Solution(100)) # initial diam = 1 because otherwise it breaks
+        self.head = Node(Pipe("INPUT PIPE", 0, 0, 0, 1), oC.Solution(100000)) # initial diam = 1 because otherwise it breaks
+        
         self.staticHead = staticHead
         self.score = None
     
@@ -185,6 +186,13 @@ class Layout:
                 finalString += " -- "
 
         return finalString
+
+    def getLastNode(self):
+        curr = self.head
+        while curr.getNextNode():
+            curr = curr.getNextNode()
+        
+        return curr
     
     def checkDiameters(self, start=None, diam=None):
         curr = start
@@ -217,15 +225,28 @@ class Layout:
             return False
         else:
             return self.checkDiameters(curr.getNextNode(), diam)
-        
-    def layoutCost(self):
+
+    # returns the initial cost to create the layout
+    def layoutStaticCost(self):
         curr = self.head
         cost = 0
         while curr:
-            cost += curr.data.calculateCost(curr.massFlow)
+            if issubclass(type(curr.data), Transfer):
+                cost += curr.data.calculateCost(curr.massFlow)
             curr = curr.getNextNode()
 
         return cost
+    
+    # returns the cost the run the layout PER DAY
+    def layoutMFRCost(self):
+        curr = self.head
+        cost = 0
+        while curr:
+            if issubclass(type(curr.data), Operator) or issubclass(type(curr.data), Pipe):
+                cost += curr.data.calculateCost(curr.massFlow)
+            curr = curr.getNextNode()
+            
+        return cost * 24
     
     def layoutPower(self):
         curr = self.head
@@ -247,6 +268,16 @@ class Layout:
         
         return head
     
+    def ethanolConcentration(self):
+        last = self.getLastNode()
+        
+        return last.massFlow.ethanolConcentration()
+    
+    # returns the amount of ethanol PER DAY
+    def ethanolAmount(self):
+        last = self.getLastNode()
+        return last.massFlow.ethanol * 24
+        
     def layoutScore(self):
         self.score = 10
         return True

@@ -101,14 +101,14 @@ def generateLayoutSpace(generic, transferDiameters, staticHead):
         currentMassFlow = createdLayout.head.massFlow
         # print(currentMassFlow)
         
-        time.sleep(0.1)
+        # time.sleep(0.1)
+        
         for genericIndex, partKey in enumerate(idx):
             partToAdd = generic[genericIndex][partKey]
             if issubclass(type(partToAdd), Operator):
-                # print("applying a fermenter to soln")
                 currentMassFlow = partToAdd.solveMass(currentMassFlow)
                 print(currentMassFlow)
-                # time.sleep(1)
+                
             createdLayout.add(generic[genericIndex][partKey], currentMassFlow) 
             
         allPossibleLayouts[idx] = createdLayout
@@ -129,10 +129,13 @@ start = time.time()
 
 for layout in layoutSpace.flatten():
     print(layout.printList())
-    print("POWER", layout.layoutPower())
-    print("HEAD", layout.layoutEffectiveHead())
-    print("COST", layout.layoutCost())
-    # print("DIAMETER CHECK:", layout.checkDiameters())
+    print("POWER", layout.layoutPower(), "/ day")
+    print("HEAD", layout.layoutEffectiveHead(), "m")
+    print("STATIC COST $", layout.layoutStaticCost())
+    print("COST PER DAY $", layout.layoutMFRCost())
+    print("ETHANOL CONCENTRATION", layout.ethanolConcentration() * 100, "%")
+    print("ETHANOL AMOUNT", layout.ethanolAmount(), "m^3/day")
+    print("DIAMETER CHECK:", layout.checkDiameters())
     print("")
     pass
     
