@@ -273,7 +273,7 @@ def pumps():
     header = fid.readline()
     headers = header.strip().split(',')
     rawData = fid.readlines()
-    data = [i.strip().split(",") for i in rawData]
+    data = [int(i.strip().split(",")) for i in rawData]
     fid.close()
     pumps = []
     for i in range(1, len(data)):
