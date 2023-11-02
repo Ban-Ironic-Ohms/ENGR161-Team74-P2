@@ -16,8 +16,6 @@
 # QUESTION: will the different Operators be for the different options? 
 # no. we will generate linked lists for each FULL PATH OPTIONS passing the name, eff, etc for each
 
-# NOTE: efficiency of pumps needs to be investigated
-
 # superclass for the "important peices"
 
 
@@ -48,7 +46,7 @@ class Operator(Part):
         return self.solnFunc(self.eff, massFlow)
     
     def calculateCost(self, massFlow):
-        return self.costM3pH * massFlow.mass()
+        return self.costM3pH * massFlow.massFlowRate()
     
     def calculatePower(self, *args):
         return self.power
@@ -61,10 +59,10 @@ class Pump(Part):
         self.costM3pH = costM3pH
     
     def calculateCost(self, massFlow):
-        return self.costM3pH * massFlow.mass()
+        return self.costM3pH * massFlow.massFlowRate()
     
     def calculatePower(self, height, massFlow, density): # returns kJ per day
-        return self.eff * height * GRAVITY * massFlow.mass() * density * 24 * 1/1000
+        return self.eff * height * GRAVITY * massFlow.massFlowRate() * density * 24 * 1/1000
     
 class Transfer(Part):
     def __init__(self, name, diameter) -> None:
@@ -89,7 +87,7 @@ class Pipe(Transfer):
 
     # built on Darcy-Weisbach Equn from slides
     def headLoss(self, massFlow):
-        return self.eff * (8 * massFlow.mass()**2 * self.length) * (1 / (math.pi**2 * GRAVITY * self.diameter**5))
+        return self.eff * (8 * massFlow.massFlowRate()**2 * self.length) * (1 / (math.pi**2 * GRAVITY * self.diameter**5))
     
 class Duct(Pipe):
     def __init__(self, name, costM, length, diameter) -> None:
@@ -120,7 +118,7 @@ class Bend(Transfer):
 
     # from slides
     def headLoss(self, massFlow):
-        return self.pipeLoss * (massFlow.mass() / (math.pi * self.diameter**2))**2 * (1 / (2 * GRAVITY))
+        return self.pipeLoss * (massFlow.massFlowRate() / (math.pi * self.diameter**2))**2 * (1 / (2 * GRAVITY))
     
 class Valve(Transfer):
     def __init__(self, name, flowCoef, costPer, diameter) -> None:
@@ -133,7 +131,7 @@ class Valve(Transfer):
     
     # from slides
     def headLoss(self, massFlow):
-        return self.flowCoef * (massFlow.mass() / (math.pi * self.diameter**2))**2 * (1 / (2 * GRAVITY))
+        return self.flowCoef * (massFlow.massFlowRate() / (math.pi * self.diameter**2))**2 * (1 / (2 * GRAVITY))
 
 # STRUCTURE RULES:
 # 1) each operator must have a valve on its inlet and outlet
@@ -252,9 +250,10 @@ class Layout:
     def layoutScore(self):
         self.score = 10
         return True
-
+"""
 # ----------------- GENERATE SPACE OF ALL POSSIBILITIES -------------------
 
+#        ---- create lists of options for each part ----
 def ferment():
     fid = open('data/fermenters.csv', 'r')
     header = fid.readline()
@@ -282,7 +281,7 @@ def pumps():
         pumps.append(temp)
     return pumps
 
-
+#           ---- lists used for testing (remove later) ----
 operators = [Operator("Scrap", "Fermenter", 320, 46600, 0.5, oC.fermenter), Operator("Average", "Fermenter", 380, 47200, 0.75, oC.fermenter),]
 pumps1 = [Pump("Cheap", 260, 6, 1), Pump("Value", 200, 1, 6), Pump("Casdheap", 200, 1, 6)]
     # [Pump("Cheap", 200, 1, 9), Pump("Value", 200, 1, 9), Pump("asd", 200, 1, 9)],   
@@ -291,6 +290,8 @@ bends = [Bend("120", 90, 120, 23, 0.1), Bend("100", 90, 100, 23, 0.1), Bend("80"
 
 # print(ferment())
 # print(pumps())
+
+#           ---- create the generic layout
 generic = [ferment(), pumps1, bends]
 generic = [ferment() for i in range(4)]
 transferDiameters = [.1, 0.13]
@@ -338,7 +339,7 @@ for layout in layoutSpace.flatten():
     
 print(f"run took {time.time() - start} sec")
 
-"""
+
 # later I should add waste outputs
 a = Layout(10)
 a.add(Pump("Pump1", 415, 6, 0.92), INITIAL_MASS_FLOW) # NOTE: we will have to forward calculate the necessary effective elevation gain (similar to how we calculate if the sequential diamteres work)
@@ -365,4 +366,7 @@ print(a.printList())
 print(a.checkDiameters())
 print(a.layoutCost())
 print(a.layoutEffectiveHead())
+
+
+
 """
