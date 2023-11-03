@@ -78,7 +78,7 @@ operators = [Operator("Scrap", "Fermenter", 320, 46600, 0.5, oC.fermenter), Oper
 pumps1 = [Pump("Cheap", 260, 6, 1), Pump("Value", 200, 1, 6), Pump("Casdheap", 200, 1, 6)]
     # [Pump("Cheap", 200, 1, 9), Pump("Value", 200, 1, 9), Pump("asd", 200, 1, 9)],   
 # ]
-bends = [Bend("120", 90, 120, 23, 0.1), Bend("100", 90, 100, 23, 0.1), Bend("80", 90, 80, 23, 0.1)]
+bends = [Bend("120", 90, 120, 25, 0.1), Bend("100", 90, 100, 23, 0.12), Bend("80", 90, 80, 199, 0.14)]
 
 # print(fermenters())
 # print(pumps())
@@ -97,7 +97,7 @@ def generateLayoutSpace(generic, transferDiameters, staticHead):
     allPossibleLayouts = np.zeros(lengths, dtype=np.object_)
 
     for idx in itertools.product(*[range(s) for s in shape]):
-        print("\nNEW LAYOUT")
+        # print("\nNEW LAYOUT")
         createdLayout = Layout(staticHead)
         currentMassFlow = createdLayout.head.massFlow
         # print(currentMassFlow)
@@ -108,7 +108,7 @@ def generateLayoutSpace(generic, transferDiameters, staticHead):
             partToAdd = generic[genericIndex][partKey]
             if issubclass(type(partToAdd), Operator):
                 currentMassFlow = partToAdd.solveMass(currentMassFlow)
-                print(currentMassFlow)
+                # print(currentMassFlow)
                 
             createdLayout.add(generic[genericIndex][partKey], currentMassFlow) 
             
@@ -119,13 +119,50 @@ def generateLayoutSpace(generic, transferDiameters, staticHead):
 layoutSpace = generateLayoutSpace(generic, transferDiameters, 10)
 # print(layoutSpace)
 
+#           --- apply score function to  ---
+
+def bestScore(layoutSpace):
+    layoutSpace = layoutSpace.flatten()
+    minPow = layoutSpace[0].layoutPower()
+    maxPow = layoutSpace[0].layoutPower()
+    minStatCost = layoutSpace[0].layoutStaticCost()
+    maxStatCost = layoutSpace[0].layoutStaticCost()
+    minOpCost = layoutSpace[0].layoutMFRCost()
+    maxOpCost = layoutSpace[0].layoutMFRCost()
+    
+    
+    for layout in layoutSpace:
+        if minPow > layout.layoutPower():
+            minPow = layout.layoutPower()
+        if maxPow < layout.layoutPower():
+            maxPow = layout.layoutPower()
+            
+        if minStatCost > layout.layoutStaticCost():
+            minStatCost = layout.layoutStaticCost()
+        if maxStatCost < layout.layoutStaticCost():
+            maxStatCost = layout.layoutStaticCost()
+        
+        if minOpCost > layout.layoutMFRCost():
+            minOpCost = layout.layoutMFRCost()
+        if maxOpCost < layout.layoutMFRCost():
+            maxOpCost = layout.layoutMFRCost()
+    
+    maxScore = (-100, 0)
+    
+    for layout in layoutSpace:
+        score = layout.layoutScore(minPow, maxPow + 1, minStatCost, maxStatCost + 1, minOpCost, maxOpCost + 1)
+        if score > maxScore[0]:
+            maxScore = (score, layout)
+
+    return maxScore
 
 
+bestConfig = bestScore(layoutSpace)
+print(bestConfig[0], bestConfig[1])
 
 
 
 #           --- view and calculate layout space ----
-
 start = time.time()
 works = 0
 for layout in layoutSpace.flatten():
@@ -141,5 +178,12 @@ for layout in layoutSpace.flatten():
     if layout.ethanolConcentration() > 0.98:
         works += 1
     pass
-print(works)
+print(f"{works} working layouts for 98% ethanol concentration")
+
+
+bestConfig = bestScore(layoutSpace)
+print(f"BEST: {bestConfig[1]} with score {bestConfig[0]} ")
+print("BEST:")
+print(bestConfig[1].fullPrint())
+
 print(f"run took {time.time() - start} sec")

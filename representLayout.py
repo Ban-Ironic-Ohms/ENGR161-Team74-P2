@@ -155,7 +155,7 @@ class Node:
         
 class Layout:
     def __init__(self, staticHead) -> None:
-        self.head = Node(Pipe("INPUT PIPE", 0, 0, 0, 1), oC.Solution(100000)) # initial diam = 1 because otherwise it breaks
+        self.head = Node(Pipe("INPUT PIPE", 0, 0, 0, 1), oC.Solution(100)) # initial diam = 1 because otherwise it breaks
         
         self.staticHead = staticHead
         self.score = None
@@ -187,12 +187,18 @@ class Layout:
 
         return finalString
 
-    def getLastNode(self):
+    def getLastNode(self): 
         curr = self.head
         while curr.getNextNode():
             curr = curr.getNextNode()
         
         return curr
+    
+    def __str__(self) -> str:
+        return self.printList()
+    
+    def fullPrint(self) -> str:
+        return f"LAYOUT: {self.printList()}\nPOWER: {self.layoutPower()} / day\nHEAD: {self.layoutEffectiveHead()} m\nSTATIC COST: ${self.layoutStaticCost()}\nCOST PER DAY: ${self.layoutMFRCost()}\nETHANOL CONCENTRATION: {self.ethanolConcentration()}%\nETHANOL AMOUNT: {self.ethanolAmount()} m^3/day"
     
     def checkDiameters(self, start=None, diam=None):
         curr = start
@@ -278,13 +284,20 @@ class Layout:
         last = self.getLastNode()
         return last.massFlow.ethanol * 24
         
-    def layoutScore(self):
+    def layoutScore(self, minPow, maxPow, minStatCost, maxStatCost, minOpCost, maxOpCost):
         if self.ethanolConcentration() < 0.98:
-            return 0
+            self.score = 0
+            return self.score
         
-        self.score = 10
-        return True
-    
+        power = (self.layoutPower() - minPow) / (maxPow - minPow)
+        staticCost = (self.layoutStaticCost() - minStatCost) / (maxStatCost - minStatCost)
+        operatingCost = (self.layoutMFRCost() - minOpCost) / (maxOpCost - minOpCost)
+
+        score = power - staticCost - operatingCost
+        
+        self.score = score
+        return score
+
 """
 # ----------------- GENERATE SPACE OF ALL POSSIBILITIES -------------------
 

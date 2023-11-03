@@ -11,7 +11,7 @@ class Solution:
         self.sugar = initialMFR * 0.2 # in m^3 / h
         self.ethanol = 0 # in m^3 / h
         
-        print(self)
+        # print(self)
         
     def massFlowRate(self):
         return sum([self.water, self.fiber, self.sugar, self.ethanol])
@@ -32,7 +32,7 @@ class Solution:
 
     def ethanolConcentration(self):
         return self.ethanol / self.massFlowRate()
-        
+
 waste = 0 #measured in % mass of original value. 
 #class waste(solution):
 #   def __init__(self) -> None:
