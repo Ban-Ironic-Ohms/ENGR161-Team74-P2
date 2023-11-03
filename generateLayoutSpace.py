@@ -67,10 +67,11 @@ def pumps():
     pumps = []
     for i in range(1, len(data)):
         temp = []
-        for j in range(1,data[i].length()):
-            temp.append(Pump(headers[j],float(data[i][j]),float(data[i][0]),int(data[0][j]))) 
+        for j in range(1, len(data[i])): 
+            temp.append(Pump(headers[j], float(data[i][j]), float(data[i][0]), float(data[0][j]))) 
         pumps.append(temp)
     return pumps
+
 
 #           ---- lists used for testing (remove later) ----
 operators = [Operator("Scrap", "Fermenter", 320, 46600, 0.5, oC.fermenter), Operator("Average", "Fermenter", 380, 47200, 0.75, oC.fermenter),]
@@ -126,7 +127,7 @@ layoutSpace = generateLayoutSpace(generic, transferDiameters, 10)
 #           --- view and calculate layout space ----
 
 start = time.time()
-
+works = 0
 for layout in layoutSpace.flatten():
     print(layout.printList())
     print("POWER", layout.layoutPower(), "/ day")
@@ -137,6 +138,8 @@ for layout in layoutSpace.flatten():
     print("ETHANOL AMOUNT", layout.ethanolAmount(), "m^3/day")
     print("DIAMETER CHECK:", layout.checkDiameters())
     print("")
+    if layout.ethanolConcentration() > 0.98:
+        works += 1
     pass
-    
+print(works)
 print(f"run took {time.time() - start} sec")
