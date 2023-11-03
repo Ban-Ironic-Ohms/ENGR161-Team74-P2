@@ -56,7 +56,8 @@ def filters():
     for i in range(len(data[0])):
         filtObjs.append(Operator(headers[i], "Filter", float(data[0][i]), float(data[1][i]), float(data[2][i]), oC.filt))
     return filtObjs
-    
+
+
 def pumps(profRating = None):
     fid = open('data/pumps.csv', 'r')
     header = fid.readline()
@@ -65,7 +66,7 @@ def pumps(profRating = None):
     data = [i.strip().split(",") for i in rawData]
     fid.close()
     pumps = []
-    for i in range(1, len(data)):
+    for i in range(0, len(data)):
         temp = []
         for j in range(1, len(data[i])): 
             temp.append(Pump(headers[j], float(data[i][j]), float(data[i][0]), float(data[0][j]))) 

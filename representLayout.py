@@ -64,6 +64,9 @@ class Pump(Part):
     def calculatePower(self, height, massFlow, density): # returns kJ per day
         return self.eff * height * GRAVITY * massFlow.volumeFlowRate() * density * 24 * 1/1000
     
+    def __str__(self):
+        return f"{self.name} has cost {self.costM3pH} profRating {self.profRating} and eff {self.eff}"
+    
 class Transfer(Part):
     def __init__(self, name, diameter) -> None:
         super().__init__(name)
