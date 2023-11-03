@@ -57,7 +57,7 @@ def filters():
         filtObjs.append(Operator(headers[i], "Filter", float(data[0][i]), float(data[1][i]), float(data[2][i]), oC.filt))
     return filtObjs
     
-def pumps():
+def pumps(profRating = None):
     fid = open('data/pumps.csv', 'r')
     header = fid.readline()
     headers = header.strip().split(',')
@@ -67,11 +67,39 @@ def pumps():
     pumps = []
     for i in range(1, len(data)):
         temp = []
-        for j in range(1,data[i].length()):
-            temp.append(Pump(headers[j],float(data[i][j]),float(data[i][0]),int(data[0][j]))) 
+        for j in range(1, len(data[i])):
+            temp.append(Pump(headers[j],float(data[i][j]),float(data[i][0]),float(data[0][j]))) 
         pumps.append(temp)
+    if (profRating):
+        diam = [0, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36]
+        pumps = pumps[diam.index(profRating)]
     return pumps
 
+
+def pipes(length, diam = None):
+    fid = open('data/pipes.csv','r')
+    header = fid.readline()
+    headers = header.strip().split(',')
+    rawData = fid.readlines()
+    data = [i.strip().split(',') for i in rawData]
+    fid.close()
+    pipes = []
+    for i in range(2, len(data)):
+        temp = []
+        for j in range(1,len(data[i])):
+            temp.append(Pipe(headers[j], float(data[i][j]), float(data[1][j]), length, float(data[i][0])))
+        pipes.append(temp)
+    if (diam):
+        n = [0,0.1,0.11,0.12,0.13,0.14,0.15]
+        pipes = pipes[n.index(diam)]
+    return pipes
+
+def bends(angle, diam):
+    fid = open('data/bend.csv','r')
+    
+
+
+    
 #           ---- lists used for testing (remove later) ----
 operators = [Operator("Scrap", "Fermenter", 320, 46600, 0.5, oC.fermenter), Operator("Average", "Fermenter", 380, 47200, 0.75, oC.fermenter),]
 pumps1 = [Pump("Cheap", 260, 6, 1), Pump("Value", 200, 1, 6), Pump("Casdheap", 200, 1, 6)]
