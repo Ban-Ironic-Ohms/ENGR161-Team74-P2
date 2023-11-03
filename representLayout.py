@@ -47,14 +47,14 @@ class Operator(Part):
     
     def setCost(self, massFlow):
         self.cost = self.costM3pH * massFlow.volumeFlowRate()
-        print(f"calculating cost with {self.costM3pH} times {massFlow.volumeFlowRate()} = {self.cost}")
+        print(f"calculating cost FOR OPERATOR {self.costM3pH:.3f} * {massFlow.volumeFlowRate():.3f} = {self.cost:.3f}")
                     
     def calculateCost(self, *args):
-        print(f"returnign cost {self.cost}")
+        # print(f"returnign cost {self.cost}")
         return self.cost
     
     def calculatePower(self, *args):
-        return self.power
+        return self.power * (3600 / 24)
         
 class Pump(Part):
     def __init__(self, name, costM3pH, profRating, eff) -> None:
@@ -65,14 +65,15 @@ class Pump(Part):
     
     def setCost(self, massFlow):
         self.cost = self.costM3pH * massFlow.volumeFlowRate()
-        print(f"calculatig cost FOR PUMP {self.costM3pH} * {massFlow.volumeFlowRate()} = {self.cost}")
+        print(f"calculatig cost FOR PUMP {self.costM3pH:.3f} * {massFlow.volumeFlowRate():.3f} = {self.cost:.3f}")
     
     def calculateCost(self, massFlow):
-        print(f"returning cost FOR PUMP {self.cost}")
+        # print(f"returning cost FOR PUMP {self.cost}")
         return self.cost
     
-    def calculatePower(self, height, massFlow, density): # returns kJ per day
-        return self.eff * height * GRAVITY * massFlow.volumeFlowRate() * density * 24 * 1/1000
+    def calculatePower(self, height, massFlow, density): # returns kJ per hour
+        print(f"PUMP POWER: {self.eff * height * GRAVITY * massFlow.massFlowRate() * (1/1000)} kJ/h")
+        return self.eff * height * GRAVITY * massFlow.massFlowRate() * (1/1000)
     
     def __str__(self):
         return f"{self.name} has cost {self.costM3pH} profRating {self.profRating} and eff {self.eff}"
@@ -226,7 +227,7 @@ class Layout:
         return self.printList()
     
     def fullPrint(self) -> str:
-        return f"LAYOUT: {self.printList()}\nPOWER: {self.layoutPower()} / day\nHEAD: {self.layoutEffectiveHead()} m\nSTATIC COST: ${self.layoutStaticCost()}\nCOST PER DAY: ${self.layoutMFRCost()}\nETHANOL CONCENTRATION: {self.ethanolConcentration()*100}%\nETHANOL AMOUNT: {self.ethanolAmount()} m^3/day\nSCORE: {self.score}"
+        return f"LAYOUT: {self.printList()}\nPOWER: {self.layoutPower():.3f} / kJ day\nHEAD: {self.layoutEffectiveHead():.3f} m\nSTATIC COST: ${self.layoutStaticCost():.3f}\nCOST PER DAY: ${self.layoutMFRCost():.3f}\nETHANOL CONCENTRATION: {self.ethanolConcentration()*100:.3f}%\nETHANOL AMOUNT: {self.ethanolAmount():.3f} m^3/day\nSCORE: {self.score}\nENERGY ROI: {self.ethanolAmount() *  21160191/ self.layoutPower()}"
     
     def checkDiameters(self, start=None, diam=None):
         curr = start
@@ -282,14 +283,16 @@ class Layout:
             
         return 0
     
+    # in kJ / day
     def layoutPower(self):
         curr = self.head
         power = 0
         while curr:
             power += curr.data.calculatePower(self.layoutEffectiveHead(), curr.massFlow, curr.massFlow.density())
+            print(f"adding power from {type(curr.data)} equal to {curr.data.calculatePower(self.layoutEffectiveHead(), curr.massFlow, curr.massFlow.density())}")
             curr = curr.getNextNode()
         
-        return power
+        return (power / 1000) * 24
             
     def layoutEffectiveHead(self):
         head = self.staticHead
