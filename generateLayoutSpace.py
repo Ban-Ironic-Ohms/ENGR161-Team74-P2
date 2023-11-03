@@ -139,7 +139,7 @@ bends = [Bend("120", 90, 120, 25, 0.1), Bend("100", 90, 100, 23, 0.12), Bend("80
 # print(pumps())
 
 #           ---- create the generic layout ----
-generic = [fermenters(), filters(), distillers(), dehydrators()]
+generic = [pumps(), valves(0.1), fermenters(), filters(), distillers(), dehydrators()]
 # generic = [fermenters() for i in range(4)]
 transferDiameters = [.1, 0.13]
 
