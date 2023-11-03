@@ -89,6 +89,9 @@ class Pipe(Transfer):
     def headLoss(self, massFlow):
         return self.eff * (8 * massFlow.volumeFlowRate()**2 * self.length) * (1 / (math.pi**2 * GRAVITY * self.diameter**5))
     
+    def __str__(self):
+        return f"{self.name} has cost {self.calculateCost} flow coef {self.eff} and diam {self.diameter}"
+    
 class Duct(Pipe):
     def __init__(self, name, costM, length, diameter) -> None:
         super().__init__(name, 0.002, costM, length, diameter)
@@ -116,6 +119,8 @@ class Bend(Transfer):
     def calculateCost(self, *args):
         return self.costPer
 
+    def __str__(self):
+        return f"{self.name} has angle {self.angle} has cost {self.costPer} pipeloss {self.pipeLoss} and diam {self.diameter}"
     # from slides
     def headLoss(self, massFlow):
         return self.pipeLoss * (massFlow.volumeFlowRate() / (math.pi * self.diameter**2))**2 * (1 / (2 * GRAVITY))
@@ -128,6 +133,9 @@ class Valve(Transfer):
     
     def calculateCost(self, *args):
         return self.costPer
+    
+    def __str__(self):
+        return f"{self.name} has cost {self.costPer} flow coef {self.flowCoef} and diam {self.diameter}"
     
     # from slides
     def headLoss(self, massFlow):

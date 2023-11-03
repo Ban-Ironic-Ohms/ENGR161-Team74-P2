@@ -75,6 +75,19 @@ def pumps(profRating = None):
         pumps = pumps[diam.index(profRating)]
     return pumps
 
+def bends(angle, diam):
+    fid = open('data/bend.csv','r')
+    header = fid.readline()
+    anglesl = header.strip().split(',')
+    anglesl = anglesl[1:]
+    angles = [0,20.0,30.0,45.0,60.0,75.0,90.0]
+    rawData = fid.readlines()
+    data = [i.strip().split(',') for i in rawData]
+    diams = [0,0.1,0.11,0.12,0.13,0.14,0.15]
+    fid.close
+    bend = Bend(str(angle),angle, float(data[0][angles.index(angle)]), data[diams.index(diam)][angles.index(angle)],diam)
+    return [bend]
+
 
 def pipes(length, diam = None):
     fid = open('data/pipes.csv','r')
@@ -84,19 +97,34 @@ def pipes(length, diam = None):
     data = [i.strip().split(',') for i in rawData]
     fid.close()
     pipes = []
-    for i in range(2, len(data)):
+    for i in range(1, len(data)):
         temp = []
         for j in range(1,len(data[i])):
-            temp.append(Pipe(headers[j], float(data[i][j]), float(data[1][j]), length, float(data[i][0])))
+            temp.append(Pipe(headers[j], float(data[0][j]), float(data[i][j]), length, float(data[i][0])))
         pipes.append(temp)
     if (diam):
-        n = [0,0.1,0.11,0.12,0.13,0.14,0.15]
+        n = [0.1,0.11,0.12,0.13,0.14,0.15]
         pipes = pipes[n.index(diam)]
     return pipes
 
-def bends(angle, diam):
-    fid = open('data/bend.csv','r')
-    
+
+
+def valves(diam):
+    fid = open('data/valves.csv','r')
+    header = fid.readline()
+    headers = header.strip().split(",")
+    rawData = fid.readlines()
+    data = [i.strip().split(",") for i in rawData]
+    fid.close
+    valves = []
+    for i in range(1, len(data)):
+        temp = []
+        for j in range(1, len(data[i])):
+            temp.append(Valve(headers[j], float(data[0][j]), float(data[i][j]),diam))
+        valves.append(temp)
+    n = [0.1, 0.11, 0.12, 0.13, 0.14, 0.15]
+    valves = valves[n.index(diam)]
+    return valves
 
 
     
