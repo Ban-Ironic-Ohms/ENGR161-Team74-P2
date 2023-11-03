@@ -129,6 +129,9 @@ class Valve(Transfer):
     def calculateCost(self, *args):
         return self.costPer
     
+    def __str__(self):
+        return f"{self.name} has cost {self.costPer} flow coef {self.flowCoef} and diam {self.diameter}"
+    
     # from slides
     def headLoss(self, massFlow):
         return self.flowCoef * (massFlow.massFlowRate() / (math.pi * self.diameter**2))**2 * (1 / (2 * GRAVITY))

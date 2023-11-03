@@ -117,12 +117,12 @@ def valves(diam):
     data = [i.strip().split(",") for i in rawData]
     fid.close
     valves = []
-    for i in range(2, len(data)):
+    for i in range(1, len(data)):
         temp = []
         for j in range(1, len(data[i])):
-            temp.append(Valve(headers[j], float(data[i][j]), float(data[1][j]),diam))
+            temp.append(Valve(headers[j], float(data[0][j]), float(data[i][j]),diam))
         valves.append(temp)
-    n = [0.1,0.11,0.12,0.13,0.14,0.15]
+    n = [0.1, 0.11, 0.12, 0.13, 0.14, 0.15]
     valves = valves[n.index(diam)]
     return valves
 
