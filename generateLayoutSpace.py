@@ -183,29 +183,26 @@ def bestScore(layoutSpace):
 
     return maxScore
 
-
 bestConfig = bestScore(layoutSpace)
 print(bestConfig[0], bestConfig[1])
 
-
-
 #           --- view and calculate layout space ----
 start = time.time()
-works = 0
-for layout in layoutSpace.flatten():
-    print(layout.printList())
-    print("POWER", layout.layoutPower(), "/ day")
-    print("HEAD", layout.layoutEffectiveHead(), "m")
-    print("STATIC COST $", layout.layoutStaticCost())
-    print("COST PER DAY $", layout.layoutMFRCost())
-    print("ETHANOL CONCENTRATION", layout.ethanolConcentration() * 100, "%")
-    print("ETHANOL AMOUNT", layout.ethanolAmount(), "m^3/day")
-    print("DIAMETER CHECK:", layout.checkDiameters())
-    print("")
-    if layout.ethanolConcentration() > 0.98:
-        works += 1
-    pass
-print(f"{works} working layouts for 98% ethanol concentration")
+# works = 0
+# for layout in layoutSpace.flatten():
+#     print(layout.printList())
+#     print("POWER", layout.layoutPower(), "/ day")
+#     print("HEAD", layout.layoutEffectiveHead(), "m")
+#     print("STATIC COST $", layout.layoutStaticCost())
+#     print("COST PER DAY $", layout.layoutMFRCost())
+#     print("ETHANOL CONCENTRATION", layout.ethanolConcentration() * 100, "%")
+#     print("ETHANOL AMOUNT", layout.ethanolAmount(), "m^3/day")
+#     print("DIAMETER CHECK:", layout.checkDiameters())
+#     print("")
+#     if layout.ethanolConcentration() > 0.98:
+#         works += 1
+#     pass
+# print(f"{works} working layouts for 98% ethanol concentration")
 
 
 bestConfig = bestScore(layoutSpace)

@@ -46,7 +46,7 @@ class Operator(Part):
         return self.solnFunc(self.eff, massFlow)
     
     def calculateCost(self, massFlow):
-        return self.costM3pH * massFlow.massFlowRate()
+        return self.costM3pH * massFlow.volumeFlowRate()
     
     def calculatePower(self, *args):
         return self.power
@@ -59,10 +59,10 @@ class Pump(Part):
         self.costM3pH = costM3pH
     
     def calculateCost(self, massFlow):
-        return self.costM3pH * massFlow.massFlowRate()
+        return self.costM3pH * massFlow.volumeFlowRate()
     
     def calculatePower(self, height, massFlow, density): # returns kJ per day
-        return self.eff * height * GRAVITY * massFlow.massFlowRate() * density * 24 * 1/1000
+        return self.eff * height * GRAVITY * massFlow.volumeFlowRate() * density * 24 * 1/1000
     
 class Transfer(Part):
     def __init__(self, name, diameter) -> None:
@@ -87,7 +87,7 @@ class Pipe(Transfer):
 
     # built on Darcy-Weisbach Equn from slides
     def headLoss(self, massFlow):
-        return self.eff * (8 * massFlow.massFlowRate()**2 * self.length) * (1 / (math.pi**2 * GRAVITY * self.diameter**5))
+        return self.eff * (8 * massFlow.volumeFlowRate()**2 * self.length) * (1 / (math.pi**2 * GRAVITY * self.diameter**5))
     
 class Duct(Pipe):
     def __init__(self, name, costM, length, diameter) -> None:
@@ -118,7 +118,7 @@ class Bend(Transfer):
 
     # from slides
     def headLoss(self, massFlow):
-        return self.pipeLoss * (massFlow.massFlowRate() / (math.pi * self.diameter**2))**2 * (1 / (2 * GRAVITY))
+        return self.pipeLoss * (massFlow.volumeFlowRate() / (math.pi * self.diameter**2))**2 * (1 / (2 * GRAVITY))
     
 class Valve(Transfer):
     def __init__(self, name, flowCoef, costPer, diameter) -> None:
@@ -131,7 +131,7 @@ class Valve(Transfer):
     
     # from slides
     def headLoss(self, massFlow):
-        return self.flowCoef * (massFlow.massFlowRate() / (math.pi * self.diameter**2))**2 * (1 / (2 * GRAVITY))
+        return self.flowCoef * (massFlow.volumeFlowRate() / (math.pi * self.diameter**2))**2 * (1 / (2 * GRAVITY))
 
 # STRUCTURE RULES:
 # 1) each operator must have a valve on its inlet and outlet
