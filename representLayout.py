@@ -279,8 +279,12 @@ class Layout:
         return last.massFlow.ethanol * 24
         
     def layoutScore(self):
+        if self.ethanolConcentration() < 0.98:
+            return 0
+        
         self.score = 10
         return True
+    
 """
 # ----------------- GENERATE SPACE OF ALL POSSIBILITIES -------------------
 

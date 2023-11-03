@@ -67,8 +67,8 @@ def pumps(profRating = None):
     pumps = []
     for i in range(1, len(data)):
         temp = []
-        for j in range(1, len(data[i])):
-            temp.append(Pump(headers[j],float(data[i][j]),float(data[i][0]),float(data[0][j]))) 
+        for j in range(1, len(data[i])): 
+            temp.append(Pump(headers[j], float(data[i][j]), float(data[i][0]), float(data[0][j]))) 
         pumps.append(temp)
     if (profRating):
         diam = [0, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36]
@@ -154,7 +154,7 @@ layoutSpace = generateLayoutSpace(generic, transferDiameters, 10)
 #           --- view and calculate layout space ----
 
 start = time.time()
-
+works = 0
 for layout in layoutSpace.flatten():
     print(layout.printList())
     print("POWER", layout.layoutPower(), "/ day")
@@ -165,6 +165,8 @@ for layout in layoutSpace.flatten():
     print("ETHANOL AMOUNT", layout.ethanolAmount(), "m^3/day")
     print("DIAMETER CHECK:", layout.checkDiameters())
     print("")
+    if layout.ethanolConcentration() > 0.98:
+        works += 1
     pass
-    
+print(works)
 print(f"run took {time.time() - start} sec")
