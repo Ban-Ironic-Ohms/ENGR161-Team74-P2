@@ -37,7 +37,7 @@ class Operator(Part):
     def __init__(self, name, opType, costM3pH, power, eff, solnFunc) -> None:
         super().__init__(name)
         self.opType = opType
-        self.power = power
+        self.power = power # in kWh/day
         self.eff = eff
         self.costM3pH = costM3pH
         self.solnFunc = solnFunc
@@ -73,7 +73,7 @@ class Pump(Part):
     
     def calculatePower(self, height, massFlow, density): # returns kJ per hour
         # print(f"PUMP POWER: {self.eff * height * GRAVITY * massFlow.massFlowRate() * (1/1000)} kJ/h")
-        return self.eff * height * GRAVITY * massFlow.massFlowRate() * (1/1000)
+        return self.eff * height * GRAVITY * massFlow.massFlowRate() * (1/1000) 
     
     def __str__(self):
         return f"{self.name} has cost {self.costM3pH} profRating {self.profRating} and eff {self.eff}"
@@ -101,7 +101,9 @@ class Pipe(Transfer):
 
     # built on Darcy-Weisbach Equn from slides
     def headLoss(self, massFlow):
-        return self.eff * (8 * massFlow.volumeFlowRate()**2 * self.length) * (1 / (math.pi**2 * GRAVITY * self.diameter**5))
+        loss = self.eff * (8 * (massFlow.volumeFlowRate() / 3600)**2 * self.length) * (1 / (math.pi**2 * GRAVITY * (self.diameter / 2)**5))
+        # print(f"--pipe head loss-- {loss}")
+        return loss
     
     def __str__(self):
         return f"{self.name} has cost {self.calculateCost} flow coef {self.eff} and diam {self.diameter}"
@@ -138,9 +140,12 @@ class Bend(Transfer):
 
     def __str__(self):
         return f"{self.name} has angle {self.angle} has cost {self.costPer} pipeloss {self.pipeLoss} and diam {self.diameter}"
+    
     # from slides
     def headLoss(self, massFlow):
-        return self.pipeLoss * (massFlow.volumeFlowRate() / (math.pi * self.diameter**2))**2 * (1 / (2 * GRAVITY))
+        loss = self.pipeLoss * ((massFlow.volumeFlowRate() / 3600) / (math.pi * (self.diameter / 2)**2))**2 * (1 / (2 * GRAVITY))
+        # print(f"--bend head loss-- {loss}")
+        return loss
     
 class Valve(Transfer):
     def __init__(self, name, flowCoef, costPer, diameter) -> None:
@@ -156,8 +161,10 @@ class Valve(Transfer):
     
     # from slides
     def headLoss(self, massFlow):
-        return self.flowCoef * (massFlow.volumeFlowRate() / (math.pi * self.diameter**2))**2 * (1 / (2 * GRAVITY))
-
+        loss = self.flowCoef * ((massFlow.volumeFlowRate() / 3600)/ (math.pi * (self.diameter / 2)**2))**2 / ( (2 * GRAVITY))
+        # print(f"--valve head loss-- {loss}")
+        return loss
+ 
 # STRUCTURE RULES:
 # 1) each operator must have a valve on its inlet and outlet
 # 2) each valve/pipe/bend connection must have the same diamter
@@ -228,10 +235,12 @@ class Layout:
     
     def fullPrint(self) -> str:
         return f"LAYOUT: {self.printList()}\nPOWER: {self.layoutPower():.3f} / kJ day\n\
-HEAD: {self.layoutEffectiveHead():.3f} m\nSTATIC COST: ${self.layoutStaticCost():.3f}\n\
-COST PER DAY: ${self.layoutMFRCost():.3f}\nETHANOL CONCENTRATION: {self.ethanolConcentration()*100:.3f}%\n\
-ETHANOL AMOUNT: {self.ethanolAmount():.3f} m^3/day\nSCORE: {self.score}\n\
-ENERGY ROI: {self.ethanolAmount() *  21160191/ self.layoutPower()}"
+HEAD: {self.layoutEffectiveHead():.3f} m\nSTATIC COST: ${self.layoutStaticCost():.2f}\n\
+ETHANOL CONCENTRATION: {self.ethanolConcentration()*100:.3f}%\n\
+PURE ETHANOL AMOUNT: {self.ethanolAmount():.3f} m^3/day\nTOTAL SOLUTION AMOUNT: {self.endVFR():.4f} m^3/day\n\
+SCORE: {self.score}\nENERGY ROI: {(self.ethanolAmount() *  2.116E7) / self.layoutPower()}\n\
+PURE ETHANOL AMT GAL: {self.ethanolAmount() * 264.2:.3f} gal/day\n\
+ENERGY OUT: {self.ethanolAmount() * 264.2 * 80.1 * 1000:.3f} kJ/day"
     
     def checkDiameters(self, start=None, diam=None):
         curr = start
@@ -318,6 +327,10 @@ ENERGY ROI: {self.ethanolAmount() *  21160191/ self.layoutPower()}"
     def ethanolAmount(self):
         last = self.getLastNode()
         return last.massFlow.ethanol * 24
+
+    def endVFR(self):
+        last = self.getLastNode()
+        return last.massFlow.volumeFlowRate() * 24
         
     def layoutScore(self, minPow, maxPow, minStatCost, maxStatCost, minOpCost, maxOpCost):
         if self.ethanolConcentration() < 0.98:
@@ -332,124 +345,3 @@ ENERGY ROI: {self.ethanolAmount() *  21160191/ self.layoutPower()}"
         
         self.score = score
         return score
-
-"""
-# ----------------- GENERATE SPACE OF ALL POSSIBILITIES -------------------
-
-#        ---- create lists of options for each part ----
-def ferment():
-    fid = open('data/fermenters.csv', 'r')
-    header = fid.readline()
-    headers = header.strip().split(',')
-    rawData = fid.readlines()
-    fid.close()
-    data = [i.strip().split(',') for i in rawData] # can't cast to int because i.split() gives a list
-    fermented = []
-    for i in range(len(data[0])):
-        fermented.append(Operator(headers[i], "Fermenter", float(data[0][i]), float(data[1][i]), float(data[2][i]), oC.fermenter))
-    return fermented
-
-def pumps():
-    fid = open('data/pumps.csv', 'r')
-    header = fid.readline()
-    headers = header.strip().split(',')
-    rawData = fid.readlines()
-    data = [i.strip().split(",") for i in rawData]
-    fid.close()
-    pumps = []
-    for i in range(1, len(data)):
-        temp = []
-        for j in range(1,data[i].length()):
-            temp.append(Pump(headers[j],float(data[i][j]),float(data[i][0]),int(data[0][j]))) 
-        pumps.append(temp)
-    return pumps
-
-#           ---- lists used for testing (remove later) ----
-operators = [Operator("Scrap", "Fermenter", 320, 46600, 0.5, oC.fermenter), Operator("Average", "Fermenter", 380, 47200, 0.75, oC.fermenter),]
-pumps1 = [Pump("Cheap", 260, 6, 1), Pump("Value", 200, 1, 6), Pump("Casdheap", 200, 1, 6)]
-    # [Pump("Cheap", 200, 1, 9), Pump("Value", 200, 1, 9), Pump("asd", 200, 1, 9)],   
-# ]
-bends = [Bend("120", 90, 120, 23, 0.1), Bend("100", 90, 100, 23, 0.1), Bend("80", 90, 80, 23, 0.1)]
-
-# print(ferment())
-# print(pumps())
-
-#           ---- create the generic layout
-generic = [ferment(), pumps1, bends]
-generic = [ferment() for i in range(4)]
-transferDiameters = [.1, 0.13]
-
-def generateLayoutSpace(generic, transferDiameters, staticHead):
-    lengths = tuple([len(i) for i in generic])
-
-    shape = [lengths[i] for i in range(len(lengths))]
-
-    allPossibleLayouts = np.zeros(lengths, dtype=np.object_)
-
-    for idx in itertools.product(*[range(s) for s in shape]):
-        print("NEW LAYOUT")
-        createdLayout = Layout(staticHead)
-        currentMassFlow = createdLayout.head.massFlow
-        print(currentMassFlow)
-        
-        time.sleep(0.1)
-        for genericIndex, partKey in enumerate(idx):
-            partToAdd = generic[genericIndex][partKey]
-            if issubclass(type(partToAdd), Operator):
-                # print("applying a fermenter to soln")
-                currentMassFlow = partToAdd.solveMass(currentMassFlow)
-                print(currentMassFlow)
-                # time.sleep(1)
-            createdLayout.add(generic[genericIndex][partKey], currentMassFlow) 
-            
-        allPossibleLayouts[idx] = createdLayout
-
-    return allPossibleLayouts
-
-layoutSpace = generateLayoutSpace(generic, transferDiameters, 100000)
-# print(layoutSpace)
-
-start = time.time()
-
-for layout in layoutSpace.flatten():
-    print(layout.printList())
-    print("POWER", layout.layoutPower())
-    print("HEAD", layout.layoutEffectiveHead())
-    print("COST", layout.layoutCost())
-    # print("DIAMETER CHECK:", layout.checkDiameters())
-    print("")
-    pass
-    
-print(f"run took {time.time() - start} sec")
-
-
-# later I should add waste outputs
-a = Layout(10)
-a.add(Pump("Pump1", 415, 6, 0.92), INITIAL_MASS_FLOW) # NOTE: we will have to forward calculate the necessary effective elevation gain (similar to how we calculate if the sequential diamteres work)
-a.add(Pipe("Pipe2", 0.002, 2.97, 0, 0.1), INITIAL_MASS_FLOW)
-a.add(Operator("OP3", "Fermenter", 380, 47200, 0.75, oC.fermenter), INITIAL_MASS_FLOW)
-a.add(Valve("Valve4", 800, 1, 0.1), INITIAL_MASS_FLOW)
-a.add(Pipe("Pipe5", 0.01, 2.16, 1.524, 0.1), INITIAL_MASS_FLOW)
-a.add(Valve("Valve6", 800, 1, 0.1), INITIAL_MASS_FLOW)
-a.add(Operator("Op7", "Filtration", 240, 49536, 0.75, oC.filt), INITIAL_MASS_FLOW)
-a.add(Valve("Valve8", 800, 1, 0.1), INITIAL_MASS_FLOW)
-a.add(Pump("Pump9", 415, 6, 0.92), INITIAL_MASS_FLOW)
-a.add(Pipe("Pipe10", 0.01, 2.16, 3.048, 0.1), INITIAL_MASS_FLOW)
-a.add(Valve("Valve11", 800, 1, 0.1), INITIAL_MASS_FLOW)
-a.add(Operator("Op12", "Distiller", 460, 47812, 0.9, oC.distiller), INITIAL_MASS_FLOW)
-a.add(Valve("Valve13", 800, 26, 0.15), INITIAL_MASS_FLOW)
-a.add(Pump("Pump14", 415, 6, 0.92), INITIAL_MASS_FLOW)
-a.add(Pipe("Pip15", 0.01, 55, 3.048, 0.15), INITIAL_MASS_FLOW) #change 0.15 -> 0.1 to check the checkDiamter func
-a.add(Valve("Valve16", 800, 26, 0.15), INITIAL_MASS_FLOW)
-a.add(Operator("Op17", "Dehydrator", 240, 49536, 0.75, oC.dehydrator), INITIAL_MASS_FLOW)
-a.add(Valve("Valve18", 800, 26, 0.15), INITIAL_MASS_FLOW)
-a.add(Pipe("Pip19", 0.01, 55, 3.048, 0.15), INITIAL_MASS_FLOW) 
-# END!
-print(a.printList())
-print(a.checkDiameters())
-print(a.layoutCost())
-print(a.layoutEffectiveHead())
-
-
-
-"""

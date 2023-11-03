@@ -58,7 +58,6 @@ def filters():
         filtObjs.append(Operator(headers[i], "Filter", float(data[0][i]), float(data[1][i]), float(data[2][i]), oC.filt))
     return filtObjs
 
-
 def pumps(profRating = 0):
     profRating = 36
     fid = open('data/pumps.csv', 'r')
@@ -154,7 +153,7 @@ bends = [Bend("120", 90, 120, 25, 0.1), Bend("100", 90, 100, 23, 0.12), Bend("80
 # generic = [fermenters(), valves(0.1), filters(), valves(0.1), pipes(10, 0.1), valves(0.1), distillers(), dehydrators(), valves(0.1), pipes(10, 0.1)]
 
 generic = [
-    [Pump("Cheap", 290, 18, 0.8)],
+    [Pump("Cheap", 290, 36, 0.8)],
     [Bend("90", 90, 0.3, 1.28, 0.1)],
     [Pipe("Nice", 0.01, 2.16, 18.3, 0.1)],
     [Bend("90", 90, 0.3, 1.28, 0.1)],
@@ -276,7 +275,7 @@ bestConfig = bestScore(layoutSpace)
 
 scoretime = time.time() - start - idxtime
 
-print(bestConfig[0], bestConfig[1])
+# print(bestConfig[0], bestConfig[1])
 
 print(bestConfig[1].fullPrint())
 
