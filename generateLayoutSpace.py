@@ -1,7 +1,7 @@
 from representLayout import *
 
 # ----------------- GENERATE SPACE OF ALL POSSIBILITIES -------------------
-
+'''
 
 #        ---- create lists of options for each part ----
 # There will be a function for each object
@@ -93,12 +93,23 @@ def pipes(length, diam = None):
         n = [0,0.1,0.11,0.12,0.13,0.14,0.15]
         pipes = pipes[n.index(diam)]
     return pipes
-
+'''
 def bends(angle, diam):
     fid = open('data/bend.csv','r')
-    
-
-
+    header = fid.readline()
+    anglesl = header.strip().split(',')
+    anglesl = anglesl[1:]
+    angles = [20.0,30.0,45.0,60.0,75.0,90.0]
+    rawData = fid.readlines()
+    data = [i.strip().split(',') for i in rawData]
+    diams = []
+    for i in range(1,len(data)):
+        diams.append(float(data[i][0]))
+        data[i] = data[i][1:]
+    bend = Bend(str(angle),angle, float(data[0][angles.index(angle)]), data[diams.index(diam)][angles.index(angle)],diam)
+    return [bend]
+print(bends(30.0,0.1))
+'''
     
 #           ---- lists used for testing (remove later) ----
 operators = [Operator("Scrap", "Fermenter", 320, 46600, 0.5, oC.fermenter), Operator("Average", "Fermenter", 380, 47200, 0.75, oC.fermenter),]
@@ -170,3 +181,4 @@ for layout in layoutSpace.flatten():
     pass
 print(works)
 print(f"run took {time.time() - start} sec")
+'''
