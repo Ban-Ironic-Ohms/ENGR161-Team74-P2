@@ -141,8 +141,9 @@ bends = [Bend("120", 90, 120, 25, 0.1), Bend("100", 90, 100, 23, 0.12), Bend("80
 # print(pumps())
 
 #           ---- create the generic layout ----
-generic = [fermenters(), valves(0.1), pipes(10, 0.1), valves(0.1), filters(), distillers(), dehydrators(), valves(0.1), pipes(10, 0.1)]
-# generic = [fermenters() for i in range(4)]
+generic = [fermenters(), valves(0.1), filters(), valves(0.1), pipes(10, 0.1), valves(0.1), distillers(), dehydrators(), valves(0.1), pipes(10, 0.1)]
+# generic = [fermenters(), valves(0.1), pipes(10, 0.1), valves(0.1), filters(), distillers(), dehydrators(), valves(0.1), pipes(10, 0.1)]
+
 transferDiameters = [.1, 0.13]
 
 #           ---- generate layout space ---
@@ -234,12 +235,17 @@ def bestScore(layoutSpace):
 
 #           --- view and calculate layout space ----
 start = time.time()
+
 layoutSpace = generateLayoutSpace(generic, transferDiameters, 10)
+
+idxtime = time.time() - start
+
 bestConfig = bestScore(layoutSpace)
 
+scoretime = time.time() - start - idxtime
 
 print(bestConfig[0], bestConfig[1])
 
 print(bestConfig[1].fullPrint())
 
-print(f"run took {time.time() - start} sec")
+print(f"run took {time.time() - start} sec. IDX gen time {idxtime}, score time {scoretime}")
