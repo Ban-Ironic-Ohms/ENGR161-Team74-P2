@@ -7,10 +7,10 @@ class Solution:
             initialVFR (float): the volume flow rate in m^3/h of the initial solution
         """
         
-        self.waterDensity = 998 # from https://www.usgs.gov/special-topics/water-science-school/science/water-density at 70F
-        self.fiberDensity = 381 # from https://www.aqua-calc.com/page/density-table/substance/all-blank-bran-coma-and-blank-a-blank-wheat-blank-bran-blank-fiber-blank-cereal-coma-and-blank-upc-column--blank-038000013027
-        self.sugarDensity = 1552 # from https://wiki.anton-paar.com/us-en/density-and-density-measurement/sucrose-density/
-        self.ethanolDensity = 779 # from https://pubchem.ncbi.nlm.nih.gov/compound/Ethanol#section=Experimental-Properties
+        self.waterDensity = 997 
+        self.fiberDensity = 1311 
+        self.sugarDensity = 1599
+        self.ethanolDensity = 789 
         
         oneOverSum = 1 / ( (0.6 / self.waterDensity) + (0.2 / self.fiberDensity) + (0.2 / self.sugarDensity))
         
@@ -19,7 +19,7 @@ class Solution:
         self.fiber = initialVFR * (oneOverSum) * (0.2 / self.fiberDensity)
         self.sugar = initialVFR * (oneOverSum) * (0.2 / self.sugarDensity) 
          
-        
+        # print(self.sugarMFR)     
         # print(f"{self} has {self.volumeFlowRate()}")
     
     @property
@@ -90,7 +90,7 @@ def fermenter(eff, sol):
     sol.sugarMFR = sol.sugarMFR * (1 - eff)
     sol.fiberMFR = sol.fiberMFR
     sol.waterMFR = sol.waterMFR
-    # print(sol)
+    print(sol)
     return sol
 
 def filt(eff, sol):
@@ -110,7 +110,8 @@ def filt(eff, sol):
     # sol.fiber = massFiber/newMass
     # sol.water = massWater/newMass
     # sol.ethanol = massEthanol/newMass
-    # print(sol)
+    
+    print(sol)
     
     return sol
 
@@ -130,7 +131,8 @@ def distiller(eff, sol):
     # sol.fiber = massFiber/newMass
     # sol.water = massWater/newMass
     # sol.ethanol = massEthanol/newMass
-    # print(sol)
+    
+    print(sol)
     
     return sol
 
@@ -147,7 +149,9 @@ def dehydrator(eff, sol):
     # sol.fiber = massFiber/newMass
     # sol.water = massWater/newMass
     # sol.ethanol = massEthanol/newMass
-    # print(sol)
+    
+    print(sol)
+    # print(sol.sugarMFR)
     
     return sol
 
