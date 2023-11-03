@@ -20,7 +20,7 @@ class Solution:
         self.sugar = initialVFR * (oneOverSum) * (0.2 / self.sugarDensity) 
          
         
-        print(self)
+        # print(self)
     
     @property
     def waterMFR(self):

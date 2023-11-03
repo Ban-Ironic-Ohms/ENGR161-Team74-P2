@@ -209,7 +209,7 @@ class Layout:
         return self.printList()
     
     def fullPrint(self) -> str:
-        return f"LAYOUT: {self.printList()}\nPOWER: {self.layoutPower()} / day\nHEAD: {self.layoutEffectiveHead()} m\nSTATIC COST: ${self.layoutStaticCost()}\nCOST PER DAY: ${self.layoutMFRCost()}\nETHANOL CONCENTRATION: {self.ethanolConcentration()}%\nETHANOL AMOUNT: {self.ethanolAmount()} m^3/day"
+        return f"LAYOUT: {self.printList()}\nPOWER: {self.layoutPower()} / day\nHEAD: {self.layoutEffectiveHead()} m\nSTATIC COST: ${self.layoutStaticCost()}\nCOST PER DAY: ${self.layoutMFRCost()}\nETHANOL CONCENTRATION: {self.ethanolConcentration()}%\nETHANOL AMOUNT: {self.ethanolAmount()} m^3/day\nSCORE: {self.score}"
     
     def checkDiameters(self, start=None, diam=None):
         curr = start

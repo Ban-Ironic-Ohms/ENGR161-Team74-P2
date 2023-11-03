@@ -1,4 +1,5 @@
 from representLayout import *
+import functools
 
 # ----------------- GENERATE SPACE OF ALL POSSIBILITIES -------------------
 
@@ -140,7 +141,7 @@ bends = [Bend("120", 90, 120, 25, 0.1), Bend("100", 90, 100, 23, 0.12), Bend("80
 # print(pumps())
 
 #           ---- create the generic layout ----
-generic = [pumps(), valves(0.1), fermenters(), valves(0.1), pipes(10, 0.1), valves(0.1), filters(), distillers(), valves(0.1), pipes(10, 0.1), valves(0.1), dehydrators(), valves(0.1), pipes(10, 0.1)]
+generic = [fermenters(), valves(0.1), pipes(10, 0.1), valves(0.1), filters(), distillers(), dehydrators(), valves(0.1), pipes(10, 0.1)]
 # generic = [fermenters() for i in range(4)]
 transferDiameters = [.1, 0.13]
 
@@ -149,10 +150,17 @@ def generateLayoutSpace(generic, transferDiameters, staticHead):
     lengths = tuple([len(i) for i in generic])
 
     shape = [lengths[i] for i in range(len(lengths))]
+    
+    print(f"The number of possible layouts is {functools.reduce(lambda x, y: x*y, shape)}")
 
     allPossibleLayouts = np.zeros(lengths, dtype=np.object_)
 
+    printBuffer = 0
     for idx in itertools.product(*[range(s) for s in shape]):
+        if printBuffer % 10000 == 0:
+            print("Generating idx", idx)
+            printBuffer = 0
+        printBuffer += 1
         # print("\nNEW LAYOUT")
         createdLayout = Layout(staticHead)
         currentMassFlow = createdLayout.head.massFlow
@@ -172,7 +180,6 @@ def generateLayoutSpace(generic, transferDiameters, staticHead):
 
     return allPossibleLayouts
 
-layoutSpace = generateLayoutSpace(generic, transferDiameters, 10)
 # print(layoutSpace)
 
 #           --- apply score function to  ---
@@ -186,8 +193,14 @@ def bestScore(layoutSpace):
     minOpCost = layoutSpace[0].layoutMFRCost()
     maxOpCost = layoutSpace[0].layoutMFRCost()
     
-    
-    for layout in layoutSpace:
+    printBuffer = 0
+    maxValueStart = time.time()
+    for count, layout in enumerate(layoutSpace):
+        if printBuffer % 10000 == 0:
+            print(f"checking layout {count} for max score values. Average {((time.time() - maxValueStart) / (count + 1) ) * 1000:.6f} sec per thousand")
+            printBuffer = 0
+        printBuffer += 1
+        
         if minPow > layout.layoutPower():
             minPow = layout.layoutPower()
         if maxPow < layout.layoutPower():
@@ -205,38 +218,28 @@ def bestScore(layoutSpace):
     
     maxScore = (-100, 0)
     
-    for layout in layoutSpace:
+    scoreStart = time.time()
+    for count, layout in enumerate(layoutSpace):
+        if printBuffer % 10000 == 0:
+            print(f"calculating score num {count}. Average {((time.time() - scoreStart) / (count + 1) )* 1000:.6f} sec per thosand")
+            printBuffer = 0
+        printBuffer += 1
+        
         score = layout.layoutScore(minPow, maxPow + 1, minStatCost, maxStatCost + 1, minOpCost, maxOpCost + 1)
         if score > maxScore[0]:
             maxScore = (score, layout)
 
     return maxScore
 
-bestConfig = bestScore(layoutSpace)
-print(bestConfig[0], bestConfig[1])
 
 #           --- view and calculate layout space ----
 start = time.time()
-# works = 0
-# for layout in layoutSpace.flatten():
-#     print(layout.printList())
-#     print("POWER", layout.layoutPower(), "/ day")
-#     print("HEAD", layout.layoutEffectiveHead(), "m")
-#     print("STATIC COST $", layout.layoutStaticCost())
-#     print("COST PER DAY $", layout.layoutMFRCost())
-#     print("ETHANOL CONCENTRATION", layout.ethanolConcentration() * 100, "%")
-#     print("ETHANOL AMOUNT", layout.ethanolAmount(), "m^3/day")
-#     print("DIAMETER CHECK:", layout.checkDiameters())
-#     print("")
-#     if layout.ethanolConcentration() > 0.98:
-#         works += 1
-#     pass
-# print(f"{works} working layouts for 98% ethanol concentration")
-
-
+layoutSpace = generateLayoutSpace(generic, transferDiameters, 10)
 bestConfig = bestScore(layoutSpace)
-print(f"BEST: {bestConfig[1]} with score {bestConfig[0]} ")
-print("BEST:")
+
+
+print(bestConfig[0], bestConfig[1])
+
 print(bestConfig[1].fullPrint())
 
 print(f"run took {time.time() - start} sec")
