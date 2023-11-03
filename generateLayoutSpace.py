@@ -75,6 +75,20 @@ def pumps(profRating = None):
         pumps = pumps[diam.index(profRating)]
     return pumps
 
+def bends(angle, diam):
+    fid = open('data/bend.csv','r')
+    header = fid.readline()
+    anglesl = header.strip().split(',')
+    anglesl = anglesl[1:]
+    angles = [20.0,30.0,45.0,60.0,75.0,90.0]
+    rawData = fid.readlines()
+    data = [i.strip().split(',') for i in rawData]
+    diams = []
+    for i in range(1,len(data)):
+        diams.append(float(data[i][0]))
+        data[i] = data[i][1:]
+    bend = Bend(str(angle),angle, float(data[0][angles.index(angle)]), data[diams.index(diam)][angles.index(angle)],diam)
+    return [bend]
 
 def pipes(length, diam = None):
     fid = open('data/pipes.csv','r')
@@ -94,21 +108,8 @@ def pipes(length, diam = None):
         pipes = pipes[n.index(diam)]
     return pipes
 
-def bends(angle, diam):
-    fid = open('data/bend.csv','r')
-    header = fid.readline()
-    anglesl = header.strip().split(',')
-    anglesl = anglesl[1:]
-    angles = [20.0,30.0,45.0,60.0,75.0,90.0]
-    rawData = fid.readlines()
-    data = [i.strip().split(',') for i in rawData]
-    diams = []
-    for i in range(1,len(data)):
-        diams.append(float(data[i][0]))
-        data[i] = data[i][1:]
-    bend = Bend(str(angle),angle, float(data[0][angles.index(angle)]), data[diams.index(diam)][angles.index(angle)],diam)
-    return [bend]
-print(bends(30.0,0.1))
+def valves(diam):
+
 
     
 #           ---- lists used for testing (remove later) ----
