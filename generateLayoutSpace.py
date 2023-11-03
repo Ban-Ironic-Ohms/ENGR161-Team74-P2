@@ -84,6 +84,7 @@ def bends(angle, diam):
     rawData = fid.readlines()
     data = [i.strip().split(',') for i in rawData]
     diams = []
+    fid.close
     for i in range(1,len(data)):
         diams.append(float(data[i][0]))
         data[i] = data[i][1:]
@@ -104,11 +105,26 @@ def pipes(length, diam = None):
             temp.append(Pipe(headers[j], float(data[i][j]), float(data[1][j]), length, float(data[i][0])))
         pipes.append(temp)
     if (diam):
-        n = [0,0.1,0.11,0.12,0.13,0.14,0.15]
+        n = [0.1,0.11,0.12,0.13,0.14,0.15]
         pipes = pipes[n.index(diam)]
     return pipes
 
 def valves(diam):
+    fid = open('data/valves.csv','r')
+    header = fid.readline()
+    headers = header.strip().split(",")
+    rawData = fid.readlines()
+    data = [i.strip().split(",") for i in rawData]
+    fid.close
+    valves = []
+    for i in range(2, len(data)):
+        temp = []
+        for j in range(1, len(data[i])):
+            temp.append(Valve(headers[j], float(data[i][j]), float(data[1][j]),diam))
+        valves.append(temp)
+    n = [0.1,0.11,0.12,0.13,0.14,0.15]
+    valves = valves[n.index(diam)]
+    return valves
 
 
     
