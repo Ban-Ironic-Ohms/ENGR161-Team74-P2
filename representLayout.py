@@ -96,7 +96,7 @@ class Pipe(Transfer):
         return f"{self.name} has cost {self.calculateCost} flow coef {self.eff} and diam {self.diameter}"
     
 class Duct(Pipe):
-    def __init__(self, name, costM, length, diameter) -> None:
+    def __init__(self, name, costM, diameter, length=0) -> None:
         super().__init__(name, 0.002, costM, length, diameter)
         
 class Bend(Transfer):
@@ -166,7 +166,7 @@ class Node:
         
 class Layout:
     def __init__(self, staticHead) -> None:
-        self.head = Node(Pipe("INPUT PIPE", 0, 0, 0, 1), oC.Solution(100)) # initial diam = 1 because otherwise it breaks
+        self.head = Node(Pipe("INPUT PIPE", 0, 0, 0, 1), oC.Solution(163.908)) # initial diam = 1 because otherwise it breaks
         
         self.staticHead = staticHead
         self.score = None

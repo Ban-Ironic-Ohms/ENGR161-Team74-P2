@@ -144,6 +144,28 @@ bends = [Bend("120", 90, 120, 25, 0.1), Bend("100", 90, 100, 23, 0.12), Bend("80
 generic = [fermenters(), valves(0.1), filters(), valves(0.1), pipes(10, 0.1), valves(0.1), distillers(), dehydrators(), valves(0.1), pipes(10, 0.1)]
 # generic = [fermenters(), valves(0.1), pipes(10, 0.1), valves(0.1), filters(), distillers(), dehydrators(), valves(0.1), pipes(10, 0.1)]
 
+generic = [
+    [Pump("Cheap", 290, 18, 0.8)],
+    [Bend("90", 90, 0.3, 1.28, 0.1)],
+    [Pipe("Nice", 0.01, 2.16, 18.3, 0.1)],
+    [Bend("90", 90, 0.3, 1.28, 0.1)],
+    [Valve("Salvage", 800, 1, 0.1)],
+    [Operator("Scrap", "Fermenter", 320, 46600, 0.5, oC.fermenter)],
+    [Valve("Salvage", 800, 1, 0.1)],
+    [Valve("Salvage", 800, 1, 0.1)],
+    [Operator("Scrap", "Filter", 200, 48800, 0.5, oC.filt)],
+    [Valve("Salvage", 800, 1, 0.1)],
+    [Valve("Salvage", 800, 1, 0.1)],
+    [Operator("Scrap", "Distiller", 390, 47004, 0.81, oC.distiller)],
+    [Valve("Salvage", 800, 1, 0.1)],
+    [Bend("90", 90, 0.3, 1.28, 0.1)],
+    [Bend("90", 90, 0.3, 1.28, 0.1)],
+    [Valve("Salvage", 800, 1, 0.1)],
+    [Operator("Scrap", "Dehydrator", 200, 48800, 0.5, oC.dehydrator)],
+    [Valve("Salvage", 800, 1, 0.1)],
+    [Duct("1", 228, 1, 1)]
+]
+
 transferDiameters = [.1, 0.13]
 
 #           ---- generate layout space ---
