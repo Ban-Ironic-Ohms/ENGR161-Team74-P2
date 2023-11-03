@@ -128,18 +128,20 @@ def valves(diam):
     valves = valves[n.index(diam)]
     return valves
 
-def ducts(diam):
+def ducts(diam, length):
     fid =  open('data/ducts.csv','r')
     fF = fid.readline()
     fricF = fF.strip().split(',')
     rawData = fid.readlines()
     data = [ i.strip().split(',') for i in rawData]
-    duc = []
-    for i in range(data):
-        for j in range(data[i]):
-            duc.append(Duct())
+    diameter = []
+    for i in range(len(data)):
+        diameter.append(float(data[i][0]))
+    duc = (Duct(str(diam), float(data[diameter.index(diam)][1]), length, diam))
+    return [duc]
 
-    
+
+
 #           ---- lists used for testing (remove later) ----
 operators = [Operator("Scrap", "Fermenter", 320, 46600, 0.5, oC.fermenter), Operator("Average", "Fermenter", 380, 47200, 0.75, oC.fermenter),]
 pumps1 = [Pump("Cheap", 260, 6, 1), Pump("Value", 200, 1, 6), Pump("Casdheap", 200, 1, 6)]

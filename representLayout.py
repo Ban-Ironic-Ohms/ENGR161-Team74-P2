@@ -98,6 +98,9 @@ class Pipe(Transfer):
 class Duct(Pipe):
     def __init__(self, name, costM, length, diameter) -> None:
         super().__init__(name, 0.002, costM, length, diameter)
+    def __str__(self):
+        return f"{self.name} has cost {self.costM} length {self.length} and diam {self.diameter}"
+    
         
 class Bend(Transfer):
     def __init__(self, name, angle, pipeLoss, costPer, diameter) -> None:
