@@ -59,7 +59,8 @@ def filters():
     return filtObjs
 
 
-def pumps(profRating = None):
+def pumps(profRating = 0):
+    profRating = 36
     fid = open('data/pumps.csv', 'r')
     header = fid.readline()
     headers = header.strip().split(',')
