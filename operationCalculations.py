@@ -114,9 +114,9 @@ def filt(eff, sol):
 def distiller(eff, sol):
     # totalMass = sol.sugar + sol.fiber + sol.water + sol.ethanol * 1
     
-    sol.sugarMFR = (sol.sugarMFR * sol.ethanolMFR * ((1/eff)-1))/(sol.waterMFR + sol.ethanolMFR + sol.fiberMFR)
-    sol.fiberMFR = (sol.fiberMFR * sol.ethanolMFR * ((1/eff)-1))/(sol.waterMFR + sol.ethanolMFR + sol.fiberMFR)
-    sol.waterMFR = (sol.waterMFR * sol.ethanolMFR * ((1/eff)-1))/(sol.waterMFR + sol.ethanolMFR + sol.fiberMFR)
+    sol.sugarMFR = (sol.sugarMFR * sol.ethanolMFR * ((1/eff)-1))/(sol.waterMFR + sol.sugarMFR + sol.fiberMFR)
+    sol.fiberMFR = (sol.fiberMFR * sol.ethanolMFR * ((1/eff)-1))/(sol.waterMFR + sol.sugarMFR + sol.fiberMFR)
+    sol.waterMFR = (sol.waterMFR * sol.ethanolMFR * ((1/eff)-1))/(sol.waterMFR + sol.sugarMFR + sol.fiberMFR)
     sol.ethanolMFR = sol.ethanolMFR
     
     # lostMass = (sol.fiber - massFiber)+(sol.sugar - massSugar)+(sol.water-massWater)
