@@ -128,6 +128,16 @@ def valves(diam):
     valves = valves[n.index(diam)]
     return valves
 
+def ducts(diam):
+    fid =  open('data/ducts.csv','r')
+    fF = fid.readline()
+    fricF = fF.strip().split(',')
+    rawData = fid.readlines()
+    data = [ i.strip().split(',') for i in rawData]
+    duc = []
+    for i in range(data):
+        for j in range(data[i]):
+            duc.append(Duct())
 
     
 #           ---- lists used for testing (remove later) ----
