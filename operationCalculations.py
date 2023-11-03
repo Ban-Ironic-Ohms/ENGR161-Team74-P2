@@ -20,7 +20,7 @@ class Solution:
         self.sugar = initialVFR * (oneOverSum) * (0.2 / self.sugarDensity) 
          
         
-        # print(self)
+        # print(f"{self} has {self.volumeFlowRate()}")
     
     @property
     def waterMFR(self):
@@ -85,10 +85,12 @@ waste = 0 #measured in % mass of original value.
 
 
 def fermenter(eff, sol):
+    # print(f"FERMENTER mass solve {sol}")
     sol.ethanolMFR += sol.sugarMFR * eff * 0.51 # also note that with this implimentation, the ethanol math needs to happen first otherwise the ethanol will be based off reduced sugar
     sol.sugarMFR = sol.sugarMFR * (1 - eff)
     sol.fiberMFR = sol.fiberMFR
     sol.waterMFR = sol.waterMFR
+    # print(sol)
     return sol
 
 def filt(eff, sol):
@@ -108,6 +110,8 @@ def filt(eff, sol):
     # sol.fiber = massFiber/newMass
     # sol.water = massWater/newMass
     # sol.ethanol = massEthanol/newMass
+    # print(sol)
+    
     return sol
 
 
@@ -126,6 +130,8 @@ def distiller(eff, sol):
     # sol.fiber = massFiber/newMass
     # sol.water = massWater/newMass
     # sol.ethanol = massEthanol/newMass
+    # print(sol)
+    
     return sol
 
 
@@ -141,5 +147,7 @@ def dehydrator(eff, sol):
     # sol.fiber = massFiber/newMass
     # sol.water = massWater/newMass
     # sol.ethanol = massEthanol/newMass
+    # print(sol)
+    
     return sol
 

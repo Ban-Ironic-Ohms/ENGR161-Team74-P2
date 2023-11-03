@@ -45,8 +45,13 @@ class Operator(Part):
     def solveMass(self, massFlow):
         return self.solnFunc(self.eff, massFlow)
     
-    def calculateCost(self, massFlow):
-        return self.costM3pH * massFlow.volumeFlowRate()
+    def setCost(self, massFlow):
+        self.cost = self.costM3pH * massFlow.volumeFlowRate()
+        print(f"calculating cost with {self.costM3pH} times {massFlow.volumeFlowRate()} = {self.cost}")
+                    
+    def calculateCost(self, *args):
+        print(f"returnign cost {self.cost}")
+        return self.cost
     
     def calculatePower(self, *args):
         return self.power
@@ -58,8 +63,13 @@ class Pump(Part):
         self.eff = eff
         self.costM3pH = costM3pH
     
+    def setCost(self, massFlow):
+        self.cost = self.costM3pH * massFlow.volumeFlowRate()
+        print(f"calculatig cost FOR PUMP {self.costM3pH} * {massFlow.volumeFlowRate()} = {self.cost}")
+    
     def calculateCost(self, massFlow):
-        return self.costM3pH * massFlow.volumeFlowRate()
+        print(f"returning cost FOR PUMP {self.cost}")
+        return self.cost
     
     def calculatePower(self, height, massFlow, density): # returns kJ per day
         return self.eff * height * GRAVITY * massFlow.volumeFlowRate() * density * 24 * 1/1000
@@ -96,7 +106,7 @@ class Pipe(Transfer):
         return f"{self.name} has cost {self.calculateCost} flow coef {self.eff} and diam {self.diameter}"
     
 class Duct(Pipe):
-    def __init__(self, name, costM, diameter, length=0) -> None:
+    def __init__(self, name, costM, length, diameter) -> None:
         super().__init__(name, 0.002, costM, length, diameter)
         
 class Bend(Transfer):
@@ -157,6 +167,9 @@ class Node:
         self.massFlow = massFlow
         self.next = None
         self.waste = None
+        
+        if issubclass(type(data), Operator) or issubclass(type(data), Pump):
+            self.data.setCost(massFlow)
     
     def getNextNode(self):
         return self.next
@@ -172,12 +185,13 @@ class Layout:
         self.score = None
     
     def add(self, object, massFlow):
-        start = self.head
+        curr = self.head
         tempNode = Node(object, massFlow)
-        while start.getNextNode():
-            start = start.getNextNode()
-        start.setNext(tempNode)
+        while curr.getNextNode():
+            curr = curr.getNextNode()
+        curr.setNext(tempNode)
         del tempNode
+        
         return True
     
     def addWaste(self, object):
@@ -209,7 +223,7 @@ class Layout:
         return self.printList()
     
     def fullPrint(self) -> str:
-        return f"LAYOUT: {self.printList()}\nPOWER: {self.layoutPower()} / day\nHEAD: {self.layoutEffectiveHead()} m\nSTATIC COST: ${self.layoutStaticCost()}\nCOST PER DAY: ${self.layoutMFRCost()}\nETHANOL CONCENTRATION: {self.ethanolConcentration()}%\nETHANOL AMOUNT: {self.ethanolAmount()} m^3/day\nSCORE: {self.score}"
+        return f"LAYOUT: {self.printList()}\nPOWER: {self.layoutPower()} / day\nHEAD: {self.layoutEffectiveHead()} m\nSTATIC COST: ${self.layoutStaticCost()}\nCOST PER DAY: ${self.layoutMFRCost()}\nETHANOL CONCENTRATION: {self.ethanolConcentration()*100}%\nETHANOL AMOUNT: {self.ethanolAmount()} m^3/day\nSCORE: {self.score}"
     
     def checkDiameters(self, start=None, diam=None):
         curr = start
@@ -248,8 +262,8 @@ class Layout:
         curr = self.head
         cost = 0
         while curr:
-            if issubclass(type(curr.data), Transfer):
-                cost += curr.data.calculateCost(curr.massFlow)
+            # if issubclass(type(curr.data), Transfer):
+            cost += curr.data.calculateCost(curr.massFlow)
             curr = curr.getNextNode()
 
         return cost
@@ -263,7 +277,7 @@ class Layout:
                 cost += curr.data.calculateCost(curr.massFlow)
             curr = curr.getNextNode()
             
-        return cost * 24
+        return 0
     
     def layoutPower(self):
         curr = self.head

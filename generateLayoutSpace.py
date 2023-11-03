@@ -90,7 +90,6 @@ def bends(angle, diam):
     bend = Bend(str(angle),angle, float(data[0][angles.index(angle)]), data[diams.index(diam)][angles.index(angle)],diam)
     return [bend]
 
-
 def pipes(length, diam = None):
     fid = open('data/pipes.csv','r')
     header = fid.readline()
@@ -108,8 +107,6 @@ def pipes(length, diam = None):
         n = [0.1,0.11,0.12,0.13,0.14,0.15]
         pipes = pipes[n.index(diam)]
     return pipes
-
-
 
 def valves(diam):
     fid = open('data/valves.csv','r')
@@ -141,8 +138,7 @@ bends = [Bend("120", 90, 120, 25, 0.1), Bend("100", 90, 100, 23, 0.12), Bend("80
 # print(pumps())
 
 #           ---- create the generic layout ----
-generic = [fermenters(), valves(0.1), filters(), valves(0.1), pipes(10, 0.1), valves(0.1), distillers(), dehydrators(), valves(0.1), pipes(10, 0.1)]
-# generic = [fermenters(), valves(0.1), pipes(10, 0.1), valves(0.1), filters(), distillers(), dehydrators(), valves(0.1), pipes(10, 0.1)]
+# generic = [fermenters(), valves(0.1), filters(), valves(0.1), pipes(10, 0.1), valves(0.1), distillers(), dehydrators(), valves(0.1), pipes(10, 0.1)]
 
 generic = [
     [Pump("Cheap", 290, 18, 0.8)],
@@ -193,11 +189,12 @@ def generateLayoutSpace(generic, transferDiameters, staticHead):
         
         for genericIndex, partKey in enumerate(idx):
             partToAdd = generic[genericIndex][partKey]
+            createdLayout.add(generic[genericIndex][partKey], currentMassFlow) 
+            
             if issubclass(type(partToAdd), Operator):
                 currentMassFlow = partToAdd.solveMass(currentMassFlow)
                 # print(currentMassFlow)
                 
-            createdLayout.add(generic[genericIndex][partKey], currentMassFlow) 
             
         allPossibleLayouts[idx] = createdLayout
 
