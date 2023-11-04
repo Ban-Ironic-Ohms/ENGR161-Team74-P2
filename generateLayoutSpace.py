@@ -87,7 +87,7 @@ def bends(angle, diam):
     data = [i.strip().split(',') for i in rawData]
     diams = [0,0.1,0.11,0.12,0.13,0.14,0.15]
     fid.close
-    bend = [Bend(str(angle), angle, float(data[0][angles.index(angle)]), data[diams.index(diam)][angles.index(angle)],diam)]
+    bend = [Bend(str(angle), angle, float(data[0][angles.index(angle)]), float(data[diams.index(diam)][angles.index(angle)]), diam)]
     return bend
 
 def pipes(length, diam = None):
@@ -169,8 +169,8 @@ generic = [
 ]
 
 generic = [fermenters(), pipes(10, 0.12), filters(), valves(0.15), pipes(10, 0.15), valves(0.15), distillers(), dehydrators(), valves(0.15), pipes(10, 0.15)]
-stdDiam = 0.12
-valveOpt = 0
+stdDiam = 0.15
+valveOpt = 1 # runs tell us this is best
 generic = [pumps(36), [valves(stdDiam)[valveOpt]], fermenters(), [valves(stdDiam)[valveOpt]], pipes(10, stdDiam), [valves(stdDiam)[valveOpt]], filters(), [valves(stdDiam)[valveOpt]], bends(90, stdDiam), pipes(15, stdDiam), [valves(stdDiam)[valveOpt]], distillers(), [valves(stdDiam)[valveOpt]], pipes(10, stdDiam), [valves(stdDiam)[valveOpt]], dehydrators(), [valves(stdDiam)[valveOpt]], bends(90, stdDiam), pipes(10, stdDiam)]
 transferDiameters = [.1, 0.13]
 
@@ -225,7 +225,7 @@ def bestScore(layoutSpace):
     
     printBuffer = 0
     maxValueStart = time.time()
-    for count, layout in enumerate(layoutSpace):
+    for count, layout in enumerate(layoutSpace[::int(len(layoutSpace) / 10000)]):
         if printBuffer % 10000 == 0:
             print(f"checking layout {count} for max score values. Average {((time.time() - maxValueStart) / (count + 1) ) * 1000:.6f} sec per thousand")
             printBuffer = 0
