@@ -53,7 +53,8 @@ class Operator(Part):
         # print(f"returnign cost {self.cost}")
         return self.cost
     
-    def calculatePower(self, *args):
+    def calculatePower(self, *args): # returns kJ / h
+        # print(f"adding power for operator of {self.power * (3600 / 24)} kJ/h")
         return self.power * (3600 / 24)
         
 class Pump(Part):
@@ -189,8 +190,8 @@ class Node:
         self.next = next
         
 class Layout:
-    def __init__(self, staticHead) -> None:
-        self.head = Node(Pipe("INPUT PIPE", 0, 0, 0, 1), oC.Solution(189.3)) # initial diam = 1 because otherwise it breaks
+    def __init__(self, staticHead, initialVFR) -> None:
+        self.head = Node(Pipe("INPUT PIPE", 0, 0, 0, 1), oC.Solution(initialVFR)) # initial diam = 1 because otherwise it breaks
         
         self.staticHead = staticHead
         self.score = None
@@ -238,7 +239,7 @@ class Layout:
 HEAD: {self.layoutEffectiveHead():.3f} m\nSTATIC COST: ${self.layoutStaticCost():.2f}\n\
 ETHANOL CONCENTRATION: {self.ethanolConcentration()*100:.3f}%\n\
 PURE ETHANOL AMOUNT: {self.ethanolAmount():.3f} m^3/day\nTOTAL SOLUTION AMOUNT: {self.endVFR():.4f} m^3/day\n\
-SCORE: {self.score}\nENERGY ROI: {(self.ethanolAmount() *  2.116E7) / self.layoutPower()}\n\
+SCORE: {self.score}\nENERGY ROI: {self.returnOI()}\n\
 PURE ETHANOL AMT GAL: {self.ethanolAmount() * 264.2:.3f} gal/day\n\
 ENERGY OUT: {self.ethanolAmount() * 264.2 * 80.1 * 1000:.3f} kJ/day"
     
@@ -285,15 +286,8 @@ ENERGY OUT: {self.ethanolAmount() * 264.2 * 80.1 * 1000:.3f} kJ/day"
 
         return cost
     
-    # returns the cost the run the layout PER DAY
+    # DEPRECIATED FUNCTION
     def layoutMFRCost(self):
-        curr = self.head
-        cost = 0
-        while curr:
-            if issubclass(type(curr.data), Operator) or issubclass(type(curr.data), Pipe):
-                cost += curr.data.calculateCost(curr.massFlow)
-            curr = curr.getNextNode()
-            
         return 0
     
     # in kJ / day
@@ -305,7 +299,7 @@ ENERGY OUT: {self.ethanolAmount() * 264.2 * 80.1 * 1000:.3f} kJ/day"
             # print(f"adding power from {type(curr.data)} equal to {curr.data.calculatePower(self.layoutEffectiveHead(), curr.massFlow, curr.massFlow.density())}")
             curr = curr.getNextNode()
         
-        return (power / 1000) * 24
+        return (power) * 24
             
     def layoutEffectiveHead(self):
         head = self.staticHead
@@ -331,17 +325,27 @@ ENERGY OUT: {self.ethanolAmount() * 264.2 * 80.1 * 1000:.3f} kJ/day"
     def endVFR(self):
         last = self.getLastNode()
         return last.massFlow.volumeFlowRate() * 24
-        
-    def layoutScore(self, minPow, maxPow, minStatCost, maxStatCost, minOpCost, maxOpCost):
+    
+    def returnOI(self):
+        return (self.ethanolAmount() *  2.116E7) / self.layoutPower()
+    
+    def layoutScore(self, minPow, maxPow, minStatCost, maxStatCost):
         if self.ethanolConcentration() < 0.98:
             self.score = 0
             return self.score
         
         power = (self.layoutPower() - minPow) / (maxPow - minPow)
         staticCost = (self.layoutStaticCost() - minStatCost) / (maxStatCost - minStatCost)
-        operatingCost = (self.layoutMFRCost() - minOpCost) / (maxOpCost - minOpCost)
-
-        score = power - staticCost - operatingCost
+        rOI = self.returnOI() / 10
+        purity = (self.ethanolConcentration() - 0.98) / 0.02
+        
+        # --- weights ---
+        power = power * 0
+        staticCost = staticCost * 2
+        rOI = rOI * 4
+        purity = purity * 1
+        
+        score = power - staticCost + rOI + purity
         
         self.score = score
         return score

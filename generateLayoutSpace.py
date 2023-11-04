@@ -150,37 +150,38 @@ bends = [Bend("120", 90, 120, 25, 0.1), Bend("100", 90, 100, 23, 0.12), Bend("80
 # print(pumps())
 
 #           ---- create the generic layout ----
-# generic = [fermenters(), valves(0.1), filters(), valves(0.1), pipes(10, 0.1), valves(0.1), distillers(), dehydrators(), valves(0.1), pipes(10, 0.1)]
 
 generic = [
     [Pump("Cheap", 290, 36, 0.8)],
     [Bend("90", 90, 0.3, 1.28, 0.1)],
-    [Pipe("Nice", 0.01, 2.16, 18.3, 0.1)],
+    [Pipe("Nice", 0.01, 2.16, 15.24, 0.1)],
     [Bend("90", 90, 0.3, 1.28, 0.1)],
     [Valve("Salvage", 800, 1, 0.1)],
     [Operator("Scrap", "Fermenter", 320, 46600, 0.5, oC.fermenter)],
     [Valve("Salvage", 800, 1, 0.1)],
-    [Pipe("Nice", 0.01, 2.16, 10.0, 0.1)],
+    # [Pipe("Nice", 0.01, 2.16, 10, 0.1)],
     [Valve("Salvage", 800, 1, 0.1)],
     [Operator("Scrap", "Filter", 200, 48800, 0.5, oC.filt)],
     [Valve("Salvage", 800, 1, 0.1)],
-    [Pipe("Nice", 0.01, 2.16, 10.0, 0.1)],
+    # [Pipe("Nice", 0.01, 2.16, 10.0, 0.1)],
     [Valve("Salvage", 800, 1, 0.1)],
     [Operator("Scrap", "Distiller", 390, 47004, 0.81, oC.distiller)],
     [Valve("Salvage", 800, 1, 0.1)],
-    [Pipe("Nice", 0.01, 2.16, 10.0, 0.1)],
+    # [Pipe("Nice", 0.01, 2.16, 10.0, 0.1)],
     [Bend("90", 90, 0.3, 1.28, 0.1)],
     [Bend("90", 90, 0.3, 1.28, 0.1)],
     [Valve("Salvage", 800, 1, 0.1)],
     [Operator("Scrap", "Dehydrator", 200, 48800, 0.5, oC.dehydrator)],
     [Valve("Salvage", 800, 1, 0.1)],
+    [Pipe("Nice", 0.01, 2.16, 3.05, 0.1)],
     [Duct("1", 228, 1, 1)]
 ]
 
+generic = [fermenters(), filters(), valves(0.15), pipes(10, 0.15), valves(0.15), distillers(), dehydrators(), valves(0.15), pipes(10, 0.15)]
 transferDiameters = [.1, 0.13]
 
 #           ---- generate layout space ---
-def generateLayoutSpace(generic, transferDiameters, staticHead):
+def generateLayoutSpace(generic, transferDiameters, staticHead, initialVFR):
     lengths = tuple([len(i) for i in generic])
 
     shape = [lengths[i] for i in range(len(lengths))]
@@ -196,7 +197,7 @@ def generateLayoutSpace(generic, transferDiameters, staticHead):
             printBuffer = 0
         printBuffer += 1
         # print("\nNEW LAYOUT")
-        createdLayout = Layout(staticHead)
+        createdLayout = Layout(staticHead, initialVFR)
         currentMassFlow = createdLayout.head.massFlow
         # print(currentMassFlow)
         
@@ -245,11 +246,7 @@ def bestScore(layoutSpace):
             minStatCost = layout.layoutStaticCost()
         if maxStatCost < layout.layoutStaticCost():
             maxStatCost = layout.layoutStaticCost()
-        
-        if minOpCost > layout.layoutMFRCost():
-            minOpCost = layout.layoutMFRCost()
-        if maxOpCost < layout.layoutMFRCost():
-            maxOpCost = layout.layoutMFRCost()
+
     
     maxScore = (-100, 0)
     
@@ -260,7 +257,7 @@ def bestScore(layoutSpace):
             printBuffer = 0
         printBuffer += 1
         
-        score = layout.layoutScore(minPow, maxPow + 1, minStatCost, maxStatCost + 1, minOpCost, maxOpCost + 1)
+        score = layout.layoutScore(minPow, maxPow + 1, minStatCost, maxStatCost + 1)
         if score > maxScore[0]:
             maxScore = (score, layout)
 
@@ -270,7 +267,7 @@ def bestScore(layoutSpace):
 #           --- view and calculate layout space ----
 start = time.time()
 
-layoutSpace = generateLayoutSpace(generic, transferDiameters, 10)
+layoutSpace = generateLayoutSpace(generic, transferDiameters, 10, 189.27)
 
 idxtime = time.time() - start
 
