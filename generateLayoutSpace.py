@@ -150,15 +150,15 @@ generic = [
     [Operator("Scrap", "Fermenter", 320, 46600, 0.5, oC.fermenter)],
     # fermenters(),
     [Valve("Salvage", 800, 1, 0.1)],
-    # [Pipe("Nice", 0.01, 2.16, 10, 0.1)],
+    [Pipe("Nice", 0.01, 2.16, 10, 0.1)],
     [Valve("Salvage", 800, 1, 0.1)],
     [Operator("Scrap", "Filter", 200, 48800, 0.5, oC.filt)],
     [Valve("Salvage", 800, 1, 0.1)],
-    # [Pipe("Nice", 0.01, 2.16, 10.0, 0.1)],
+    [Pipe("Nice", 0.01, 2.16, 10.0, 0.1)],
     [Valve("Salvage", 800, 1, 0.1)],
     [Operator("Scrap", "Distiller", 390, 47004, 0.81, oC.distiller)],
     [Valve("Salvage", 800, 1, 0.1)],
-    # [Pipe("Nice", 0.01, 2.16, 10.0, 0.1)],
+    [Pipe("Nice", 0.01, 2.16, 10.0, 0.1)],
     [Bend("90", 90, 0.3, 1.28, 0.1)],
     [Bend("90", 90, 0.3, 1.28, 0.1)],
     [Valve("Salvage", 800, 1, 0.1)],
@@ -168,7 +168,7 @@ generic = [
     [Duct("1", 228, 1, 1)]
 ]
 
-generic = [fermenters(), pipes(10, 0.12), filters(), valves(0.15), pipes(10, 0.15), valves(0.15), distillers(), dehydrators(), valves(0.15), pipes(10, 0.15)]
+# generic = [fermenters(), filters(), pipes(10, 0.15), valves(0.15), distillers(), dehydrators(), valves(0.15), pipes(10, 0.15)]
 stdDiam = 0.15
 valveOpt = 1 # runs tell us this is best
 generic = [pumps(36), [valves(stdDiam)[valveOpt]], fermenters(), [valves(stdDiam)[valveOpt]], pipes(10, stdDiam), [valves(stdDiam)[valveOpt]], filters(), [valves(stdDiam)[valveOpt]], bends(90, stdDiam), pipes(15, stdDiam), [valves(stdDiam)[valveOpt]], distillers(), [valves(stdDiam)[valveOpt]], pipes(10, stdDiam), [valves(stdDiam)[valveOpt]], dehydrators(), [valves(stdDiam)[valveOpt]], bends(90, stdDiam), pipes(10, stdDiam)]
@@ -225,7 +225,8 @@ def bestScore(layoutSpace):
     
     printBuffer = 0
     maxValueStart = time.time()
-    for count, layout in enumerate(layoutSpace[::int(len(layoutSpace) / 10000)]):
+    # for count, layout in enumerate(layoutSpace[::int(len(layoutSpace) / 10000)]):
+    for count, layout in enumerate(layoutSpace):
         if printBuffer % 10000 == 0:
             print(f"checking layout {count} for max score values. Average {((time.time() - maxValueStart) / (count + 1) ) * 1000:.6f} sec per thousand")
             printBuffer = 0
@@ -270,7 +271,7 @@ bestConfig = bestScore(layoutSpace)
 scoretime = time.time() - start - idxtime
 
 # print(bestConfig[0], bestConfig[1])
-
+print("")
 print(bestConfig[1].fullPrint())
 
-print(f"run took {time.time() - start} sec. IDX gen time {idxtime}, score time {scoretime}")
+print(f"\nrun took {time.time() - start} sec. IDX gen time {idxtime}, score time {scoretime}")

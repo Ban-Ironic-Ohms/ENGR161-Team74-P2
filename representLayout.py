@@ -241,7 +241,8 @@ ETHANOL CONCENTRATION: {self.ethanolConcentration()*100:.3f}%\n\
 PURE ETHANOL AMOUNT: {self.ethanolAmount():.3f} m^3/day\nTOTAL SOLUTION AMOUNT: {self.endVFR():.4f} m^3/day\n\
 SCORE: {self.score}\nENERGY ROI: {self.returnOI()}\n\
 PURE ETHANOL AMT GAL: {self.ethanolAmount() * 264.2:.3f} gal/day\n\
-ENERGY OUT: {self.ethanolAmount() * 264.2 * 80.1 * 1000:.3f} kJ/day"
+ENERGY OUT: {self.ethanolAmount() * 264.2 * 80.1 * 1000:.3f} kJ/day\n\
+AGGREGATE WASTE: {self.getLastNode().massFlow.waste}"
     
     def checkDiameters(self, start=None, diam=None):
         curr = start
