@@ -214,7 +214,7 @@ class Layout:
         start = self.head
         finalString = ""
         while start:
-            tempString = start.data.name
+            tempString = start.data.name + " " + str(type(start.data))[24:-2]
             finalString += str(tempString)
             start = start.getNextNode()
 
@@ -340,10 +340,10 @@ ENERGY OUT: {self.ethanolAmount() * 264.2 * 80.1 * 1000:.3f} kJ/day"
         purity = (self.ethanolConcentration() - 0.98) / 0.02
         
         # --- weights ---
-        power = power * 0
-        staticCost = staticCost * 2
-        rOI = rOI * 4
-        purity = purity * 1
+        power = power * 3
+        staticCost = staticCost * 7
+        rOI = rOI * 10
+        purity = purity * 3
         
         score = power - staticCost + rOI + purity
         
