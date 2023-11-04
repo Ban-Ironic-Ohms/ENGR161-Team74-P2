@@ -345,7 +345,7 @@ ENERGY OUT: {self.ethanolAmount() * 264.2 * 80.1 * 1000:.3f} kJ/day"
         rOI = rOI * 10
         purity = purity * 3
         
-        score = power - staticCost + rOI + purity
+        score = rOI + purity - power - staticCost
         
         self.score = score
         return score
