@@ -87,8 +87,8 @@ def bends(angle, diam):
     data = [i.strip().split(',') for i in rawData]
     diams = [0,0.1,0.11,0.12,0.13,0.14,0.15]
     fid.close
-    bend = Bend(str(angle),angle, float(data[0][angles.index(angle)]), data[diams.index(diam)][angles.index(angle)],diam)
-    return [bend]
+    bend = [Bend(str(angle), angle, float(data[0][angles.index(angle)]), data[diams.index(diam)][angles.index(angle)],diam)]
+    return bend
 
 def pipes(length, diam = None):
     fid = open('data/pipes.csv','r')
@@ -139,16 +139,6 @@ def ducts(diam, length):
 
 
 
-#           ---- lists used for testing (remove later) ----
-operators = [Operator("Scrap", "Fermenter", 320, 46600, 0.5, oC.fermenter), Operator("Average", "Fermenter", 380, 47200, 0.75, oC.fermenter),]
-pumps1 = [Pump("Cheap", 260, 6, 1), Pump("Value", 200, 1, 6), Pump("Casdheap", 200, 1, 6)]
-    # [Pump("Cheap", 200, 1, 9), Pump("Value", 200, 1, 9), Pump("asd", 200, 1, 9)],   
-# ]
-bends = [Bend("120", 90, 120, 25, 0.1), Bend("100", 90, 100, 23, 0.12), Bend("80", 90, 80, 199, 0.14)]
-
-# print(fermenters())
-# print(pumps())
-
 #           ---- create the generic layout ----
 
 generic = [
@@ -158,6 +148,7 @@ generic = [
     [Bend("90", 90, 0.3, 1.28, 0.1)],
     [Valve("Salvage", 800, 1, 0.1)],
     [Operator("Scrap", "Fermenter", 320, 46600, 0.5, oC.fermenter)],
+    # fermenters(),
     [Valve("Salvage", 800, 1, 0.1)],
     # [Pipe("Nice", 0.01, 2.16, 10, 0.1)],
     [Valve("Salvage", 800, 1, 0.1)],
@@ -178,7 +169,8 @@ generic = [
 ]
 
 generic = [fermenters(), pipes(10, 0.12), filters(), valves(0.15), pipes(10, 0.15), valves(0.15), distillers(), dehydrators(), valves(0.15), pipes(10, 0.15)]
-
+stdDiam = 0.12
+generic = [pumps(36), valves(stdDiam), fermenters(), valves(stdDiam), pipes(10, stdDiam), valves(stdDiam), filters(), valves(stdDiam), bends(90, stdDiam), pipes(15, stdDiam), valves(stdDiam), distillers(), valves(stdDiam), pipes(10, stdDiam), valves(stdDiam), dehydrators(), valves(stdDiam), bends(90, stdDiam), pipes(10, stdDiam)]
 transferDiameters = [.1, 0.13]
 
 #           ---- generate layout space ---
@@ -214,7 +206,7 @@ def generateLayoutSpace(generic, transferDiameters, staticHead, initialVFR):
                 
             
         allPossibleLayouts[idx] = createdLayout
-
+    # print(allPossibleLayouts)
     return allPossibleLayouts
 
 # print(layoutSpace)

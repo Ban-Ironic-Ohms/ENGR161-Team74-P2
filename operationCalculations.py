@@ -63,7 +63,7 @@ class Solution:
     # using aproximation outlined in slides
     def density(self):
         density = 0
-        mass = self.volumeFlowRate()
+        mass = self.massFlowRate()
         density += (self.water / mass) * self.waterDensity
         density += (self.fiber / mass) * self.fiberDensity
         density += (self.sugar / mass) * self.sugarDensity
