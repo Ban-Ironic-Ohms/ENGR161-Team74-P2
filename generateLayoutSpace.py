@@ -177,7 +177,7 @@ generic = [
     [Duct("1", 228, 1, 1)]
 ]
 
-generic = [fermenters(), filters(), valves(0.15), pipes(10, 0.15), valves(0.15), distillers(), dehydrators(), valves(0.15), pipes(10, 0.15)]
+generic = [fermenters(), pipes(10, 0.12), filters(), valves(0.15), pipes(10, 0.15), valves(0.15), distillers(), dehydrators(), valves(0.15), pipes(10, 0.15)]
 
 transferDiameters = [.1, 0.13]
 
