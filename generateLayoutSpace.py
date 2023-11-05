@@ -1,11 +1,41 @@
+# Project 2: Modeling Mass and Energy Balances
+# File: generateLayoutSpace.py
+# Date: 5 November 2023
+# By: Micah Robinson
+# robin709
+# Mitchell McCormick 
+# mccorm84
+# Amanda Zheng 
+# zheng749
+# Savannah Hoar
+# shoar
+# Section: 5
+# Team: 74
+#
+# ELECTRONIC SIGNATURE
+# Micah Robinson
+# Mitchell McCormick 
+# Amanda Zheng 
+# Savannah Hoar
+#
+# The electronic signatures above indicate that the program
+# submitted for evaluation is the combined effort of all
+# team members and that each member of the team was an
+# equal participant in its creation. In addition, each
+# member of the team has a general understanding of
+# all aspects of the program development and execution.
+#
+# This file generates all possible layouts of the system based on provided data, 
+# solves each layout, and displays the best layout and it's specs 
+
+# ----------------- IMPORTS -------------------
+
 from representLayout import *
 import functools
 
 # ----------------- GENERATE SPACE OF ALL POSSIBILITIES -------------------
 
-
 #        ---- create lists of options for each part ----
-# There will be a function for each object
 def fermenters():
     fid = open('data/fermenters.csv', 'r')
     header = fid.readline()
@@ -137,10 +167,10 @@ def ducts(diam, length):
     duc = (Duct(str(diam), float(data[diameter.index(diam)][1]), length, diam))
     return [duc]
 
-
-
 #           ---- create the generic layout ----
 
+
+# GENERIC LAYOUT FOR VALIDATION
 # generic = [
 #     [Pump("Cheap", 290, 36, 0.8)],
 #     [Bend("90", 90, 0.3, 1.28, 0.1)],
@@ -169,37 +199,12 @@ def ducts(diam, length):
 # ]
 
 
-# generic = [fermenters(), filters(), pipes(10, 0.15), valves(0.15), distillers(), dehydrators(), valves(0.15), pipes(10, 0.15)]
+# GENERIC LAYOUTS BASED ON CONSTANT VALVES AND DIAMETER
 stdDiam = 0.15
 valveOpt = 3 # runs tell us this is best
-generic = [pumps(36), [valves(stdDiam)[valveOpt]], fermenters(), [valves(stdDiam)[valveOpt]], pipes(10, stdDiam), [valves(stdDiam)[valveOpt]], filters(), [valves(stdDiam)[valveOpt]], bends(90, stdDiam), pipes(15, stdDiam), [valves(stdDiam)[valveOpt]], distillers(), [valves(stdDiam)[valveOpt]], pipes(10, stdDiam), [valves(stdDiam)[valveOpt]], dehydrators(), [valves(stdDiam)[valveOpt]], bends(90, stdDiam), pipes(10, stdDiam)]
+generic = [[pumps(36)[0]], [valves(stdDiam)[valveOpt]], fermenters(), [valves(stdDiam)[valveOpt]], pipes(10, stdDiam), [valves(stdDiam)[valveOpt]], filters(), [valves(stdDiam)[valveOpt]], bends(90, stdDiam), pipes(15, stdDiam), [valves(stdDiam)[valveOpt]], distillers(), [valves(stdDiam)[valveOpt]], pipes(10, stdDiam), [valves(stdDiam)[valveOpt]], dehydrators(), [valves(stdDiam)[valveOpt]], bends(90, stdDiam), pipes(10, stdDiam)]
 
-
-
-# generic = [pumps(36), valves(stdDiam), fermenters(), valves(stdDiam), pipes(10, stdDiam), valves(stdDiam), filters(), valves(stdDiam), bends(90, stdDiam), pipes(15, stdDiam), valves(stdDiam), distillers(), valves(stdDiam), pipes(10, stdDiam), valves(stdDiam), dehydrators(), valves(stdDiam), bends(90, stdDiam), pipes(10, stdDiam)]
-
-# generic = [
-#     [Pump("Cheap", 510.0, 36, 0.8)],
-#     [valves(stdDiam)[valveOpt]],
-#     [Operator("Premium", "Fermenter", 460.0, 47500.0, 0.9, oC.fermenter)],
-#     [valves(stdDiam)[valveOpt]],
-#     [Pipe("Salvage", 0.05, 26, 10, stdDiam)],
-#     [valves(stdDiam)[valveOpt]],
-#     [Operator("Premium", "Filter", 280.0, 50350.0, 0.9, oC.filt)],
-#     [valves(stdDiam)[valveOpt]],
-#     [Bend("90", 90, 0.3, 80, stdDiam)],
-#     [Pipe("Salvage", 0.05, 26, 15, stdDiam)],
-#     [valves(stdDiam)[valveOpt]],
-#     [Operator("Average", "Distiller", 460.0, 47812.0, 0.9, oC.distiller)],
-#     [valves(stdDiam)[valveOpt]],
-#     [Pipe("Salvage", 0.05, 26, 10, stdDiam)],
-#     [valves(stdDiam)[valveOpt]],
-#     [Operator("World Class", "Dehydrator", 480.0, 51000.0, 0.98, oC.dehydrator)],
-#     [valves(stdDiam)[valveOpt]],
-#     [Bend("90", 90, 0.3, 80, stdDiam)],
-#     [Pipe("Salvage", 0.05, 26, 10, stdDiam)]
-# ]
-
+# depreciated
 transferDiameters = [.1, 0.13]
 
 #           ---- generate layout space ---
@@ -240,7 +245,7 @@ def generateLayoutSpace(generic, transferDiameters, staticHead, initialVFR):
 
 # print(layoutSpace)
 
-#           --- apply score function to  ---
+# ----------------- SOLVE LAYOUT SPACE -------------------
 
 def bestScore(layoutSpace):
     layoutSpace = layoutSpace.flatten()
@@ -290,7 +295,8 @@ def bestScore(layoutSpace):
     return maxScore
 
 
-#           --- view and calculate layout space ----
+# ----------------- PRINT RESULTS -------------------
+
 start = time.time()
 
 # layoutSpace = generateLayoutSpace(generic, transferDiameters, 10, 189.27)
