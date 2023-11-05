@@ -88,6 +88,7 @@ class Transfer(Part):
         return f"diameter: {self.diameter}"
 
     def calculatePower(self, *args):
+        
         return 0
         
 class Pipe(Transfer):
@@ -105,6 +106,21 @@ class Pipe(Transfer):
         loss = self.eff * (8 * (massFlow.volumeFlowRate() / 3600)**2 * self.length) * (1 / (math.pi**2 * GRAVITY * (self.diameter / 2)**5))
         # print(f"--pipe head loss-- {loss}")
         return loss
+    
+    def calculatePower(self, *args):
+        if self.length == 0: #input pipe
+            return 0
+        
+        # --- pipe vibration energy loss modeled as power usage ---
+        # These values come from research and assumptions
+        speedSound = 3230
+        youngMod = 29.5
+        possionRatio = 0.29
+        outerDiam = 0.5
+        deflectionFactor = 0.05
+        
+        energy = (speedSound * youngMod * (self.diameter + outerDiam) * (deflectionFactor * self.length * possionRatio)**2) * (1 / (2 * self.length**2))
+        return energy
     
     def __str__(self):
         return f"{self.name} has cost {self.calculateCost} flow coef {self.eff} and diam {self.diameter}"
@@ -235,13 +251,17 @@ class Layout:
         return self.printList()
     
     def fullPrint(self) -> str:
-        return f"LAYOUT: {self.printList()}\nPOWER: {self.layoutPower():.3f} / kJ day\n\
-HEAD: {self.layoutEffectiveHead():.3f} m\nSTATIC COST: ${self.layoutStaticCost():.2f}\n\
+        return f"LAYOUT: {self.printList()}\n\
+POWER: {self.layoutPower():.3f} / kJ day\n\
+HEAD: {self.layoutEffectiveHead():.3f} m\n\
+STATIC COST: ${self.layoutStaticCost():.2f}\n\
 ETHANOL CONCENTRATION: {self.ethanolConcentration()*100:.3f}%\n\
-PURE ETHANOL AMOUNT: {self.ethanolAmount():.3f} m^3/day\nTOTAL SOLUTION AMOUNT: {self.endVFR():.4f} m^3/day\n\
+PURE ETHANOL AMOUNT: {self.ethanolAmount():.3f} m^3/day\n\
+TOTAL SOLUTION AMOUNT: {self.endVFR():.4f} m^3/day\n\
 SCORE: {self.score}\nENERGY ROI: {self.returnOI()}\n\
 PURE ETHANOL AMT GAL: {self.ethanolAmount() * 264.2:.3f} gal/day\n\
 ENERGY OUT: {self.ethanolAmount() * 264.2 * 80.1 * 1000:.3f} kJ/day\n\
+fin. sltn. comp.: {self.getLastNode().massFlow}\n\
 AGGREGATE WASTE: {self.getLastNode().massFlow.waste}"
     
     def checkDiameters(self, start=None, diam=None):

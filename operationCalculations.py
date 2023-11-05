@@ -69,27 +69,27 @@ class Solution:
         self.co2 = MFR / self.co2Density
     
     def volumeFlowRate(self):
-        return self.water + self.fiber + self.sugar + self.ethanol
+        return self.water + self.fiber + self.sugar + self.ethanol + self.co2
     
     def massFlowRate(self):
-        return self.waterMFR + self.fiberMFR + self.sugarMFR + self.ethanolMFR
+        return self.waterMFR + self.fiberMFR + self.sugarMFR + self.ethanolMFR + self.co2MFR
 
     # using aproximation outlined in slides
     def density(self):
         density = 0
         mass = self.massFlowRate()
-        density += (self.water / mass) * self.waterDensity
-        density += (self.fiber / mass) * self.fiberDensity
-        density += (self.sugar / mass) * self.sugarDensity
-        density += (self.ethanol / mass) * self.ethanolDensity
-        
+        density += (self.waterMFR / mass) * self.waterDensity
+        density += (self.fiberMFR / mass) * self.fiberDensity
+        density += (self.sugarMFR / mass) * self.sugarDensity
+        density += (self.ethanolMFR / mass) * self.ethanolDensity
+        density += (self.co2MFR / mass) * self.co2Density
         return density
     
     def __str__(self) -> str:
         ret = f"{self.water:.4f}m^3/h water, {self.fiber:.4f}m^3/h fiber, {self.sugar:.4f}m^3/h sugar, {self.ethanol:.4f}m^3/h ethanol, {self.co2:.4f}m^3/h co2 with total volume flow rate {self.volumeFlowRate():.4f} m^3/h and density {self.density():.4f}"
         try:
-            # ret += f"\nWASTE: {self.waste}"
-            pass
+            ret += f"\nWASTE: {self.waste}"
+            # pass
         except AttributeError:
             return ret
         return ret

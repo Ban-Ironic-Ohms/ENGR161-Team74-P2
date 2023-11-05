@@ -170,8 +170,10 @@ generic = [
 
 # generic = [fermenters(), filters(), pipes(10, 0.15), valves(0.15), distillers(), dehydrators(), valves(0.15), pipes(10, 0.15)]
 stdDiam = 0.15
-valveOpt = 1 # runs tell us this is best
+valveOpt = 3 # runs tell us this is best
 generic = [pumps(36), [valves(stdDiam)[valveOpt]], fermenters(), [valves(stdDiam)[valveOpt]], pipes(10, stdDiam), [valves(stdDiam)[valveOpt]], filters(), [valves(stdDiam)[valveOpt]], bends(90, stdDiam), pipes(15, stdDiam), [valves(stdDiam)[valveOpt]], distillers(), [valves(stdDiam)[valveOpt]], pipes(10, stdDiam), [valves(stdDiam)[valveOpt]], dehydrators(), [valves(stdDiam)[valveOpt]], bends(90, stdDiam), pipes(10, stdDiam)]
+generic = [pumps(36), valves(stdDiam), fermenters(), valves(stdDiam), pipes(10, stdDiam), valves(stdDiam), filters(), valves(stdDiam), bends(90, stdDiam), pipes(15, stdDiam), valves(stdDiam), distillers(), valves(stdDiam), pipes(10, stdDiam), valves(stdDiam), dehydrators(), valves(stdDiam), bends(90, stdDiam), pipes(10, stdDiam)]
+
 transferDiameters = [.1, 0.13]
 
 #           ---- generate layout space ---
@@ -220,8 +222,8 @@ def bestScore(layoutSpace):
     maxPow = layoutSpace[0].layoutPower()
     minStatCost = layoutSpace[0].layoutStaticCost()
     maxStatCost = layoutSpace[0].layoutStaticCost()
-    minOpCost = layoutSpace[0].layoutMFRCost()
-    maxOpCost = layoutSpace[0].layoutMFRCost()
+    # minOpCost = layoutSpace[0].layoutMFRCost()
+    # maxOpCost = layoutSpace[0].layoutMFRCost()
     
     printBuffer = 0
     maxValueStart = time.time()
@@ -262,7 +264,8 @@ def bestScore(layoutSpace):
 #           --- view and calculate layout space ----
 start = time.time()
 
-layoutSpace = generateLayoutSpace(generic, transferDiameters, 10, 189.27)
+# layoutSpace = generateLayoutSpace(generic, transferDiameters, 10, 189.27)
+layoutSpace = generateLayoutSpace(generic, transferDiameters, 10, 118.62)
 
 idxtime = time.time() - start
 
