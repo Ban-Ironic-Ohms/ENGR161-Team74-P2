@@ -32,7 +32,7 @@
 
 # ----------------- IMPORTS -------------------
 
-import operationCalculations as oC
+import Proj2_operationCalculations_Team74 as oC
 import numpy as np
 import itertools
 import math

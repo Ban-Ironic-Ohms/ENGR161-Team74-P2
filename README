@@ -1,1 +1,6 @@
-project 2
+## ENGR161 Project 2
+
+# Usage
+To run the demo preprogramed into this code, run the file generateLayoutSpace.py
+
+It should take several minutes. If at any point the program stops printing for more than a minute, you can assume something crashed and kill the process. It will probably take 1-2 GB of RAM. 
