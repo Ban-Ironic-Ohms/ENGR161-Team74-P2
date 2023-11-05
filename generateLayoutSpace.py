@@ -168,11 +168,35 @@ generic = [
     [Duct("1", 228, 1, 1)]
 ]
 
+
+
 # generic = [fermenters(), filters(), pipes(10, 0.15), valves(0.15), distillers(), dehydrators(), valves(0.15), pipes(10, 0.15)]
 stdDiam = 0.15
 valveOpt = 3 # runs tell us this is best
 generic = [pumps(36), [valves(stdDiam)[valveOpt]], fermenters(), [valves(stdDiam)[valveOpt]], pipes(10, stdDiam), [valves(stdDiam)[valveOpt]], filters(), [valves(stdDiam)[valveOpt]], bends(90, stdDiam), pipes(15, stdDiam), [valves(stdDiam)[valveOpt]], distillers(), [valves(stdDiam)[valveOpt]], pipes(10, stdDiam), [valves(stdDiam)[valveOpt]], dehydrators(), [valves(stdDiam)[valveOpt]], bends(90, stdDiam), pipes(10, stdDiam)]
-generic = [pumps(36), valves(stdDiam), fermenters(), valves(stdDiam), pipes(10, stdDiam), valves(stdDiam), filters(), valves(stdDiam), bends(90, stdDiam), pipes(15, stdDiam), valves(stdDiam), distillers(), valves(stdDiam), pipes(10, stdDiam), valves(stdDiam), dehydrators(), valves(stdDiam), bends(90, stdDiam), pipes(10, stdDiam)]
+# generic = [pumps(36), valves(stdDiam), fermenters(), valves(stdDiam), pipes(10, stdDiam), valves(stdDiam), filters(), valves(stdDiam), bends(90, stdDiam), pipes(15, stdDiam), valves(stdDiam), distillers(), valves(stdDiam), pipes(10, stdDiam), valves(stdDiam), dehydrators(), valves(stdDiam), bends(90, stdDiam), pipes(10, stdDiam)]
+
+generic = [
+    [Pump("Cheap", 510, 36, 0.8)],
+    [Valve("Glorious", 500, 76, stdDiam)],
+    [Operator("Premium", "Fermenter", 460, 47500, 0.9, oC.fermenter)],
+    [Valve("Glorious", 500, 76, stdDiam)],
+    [Pipe("Salvage", 0.05, 26, 10, stdDiam)],
+    [Valve("Glorious", 500, 76, stdDiam)],
+    [Operator("Premium", "Filter", 280, 50350, 0.9, oC.filt)],
+    [Valve("Glorious", 500, 76, stdDiam)],
+    [Bend("90", 90, 0.3, 80, stdDiam)],
+    [Pipe("Salvage", 0.05, 26, 15, stdDiam)],
+    [Valve("Glorious", 500, 76, stdDiam)],
+    [Operator("Average", "Distiller", 460, 47812, 0.9, oC.distiller)],
+    [Valve("Glorious", 500, 76, stdDiam)],
+    [Pipe("Salvage", 0.05, 26, 10, stdDiam)],
+    [Valve("Glorious", 500, 76, stdDiam)],
+    [Operator("World Class", "Dehydrator", 480, 51000, 0.98, oC.dehydrator)],
+    [Bend("90", 90, 0.3, 80, stdDiam)],
+    [Valve("Glorious", 500, 76, stdDiam)],
+    [Pipe("Salvage", 0.05, 26, 10, stdDiam)]
+]
 
 transferDiameters = [.1, 0.13]
 

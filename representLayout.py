@@ -120,6 +120,7 @@ class Pipe(Transfer):
         deflectionFactor = 0.05
         
         energy = (speedSound * youngMod * (self.diameter + outerDiam) * (deflectionFactor * self.length * possionRatio)**2) * (1 / (2 * self.length**2))
+        # return 0
         return energy
     
     def __str__(self):
