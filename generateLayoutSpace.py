@@ -141,60 +141,62 @@ def ducts(diam, length):
 
 #           ---- create the generic layout ----
 
-generic = [
-    [Pump("Cheap", 290, 36, 0.8)],
-    [Bend("90", 90, 0.3, 1.28, 0.1)],
-    [Pipe("Nice", 0.01, 2.16, 15.24, 0.1)],
-    [Bend("90", 90, 0.3, 1.28, 0.1)],
-    [Valve("Salvage", 800, 1, 0.1)],
-    [Operator("Scrap", "Fermenter", 320, 46600, 0.5, oC.fermenter)],
-    # fermenters(),
-    [Valve("Salvage", 800, 1, 0.1)],
-    [Pipe("Nice", 0.01, 2.16, 10, 0.1)],
-    [Valve("Salvage", 800, 1, 0.1)],
-    [Operator("Scrap", "Filter", 200, 48800, 0.5, oC.filt)],
-    [Valve("Salvage", 800, 1, 0.1)],
-    [Pipe("Nice", 0.01, 2.16, 10.0, 0.1)],
-    [Valve("Salvage", 800, 1, 0.1)],
-    [Operator("Scrap", "Distiller", 390, 47004, 0.81, oC.distiller)],
-    [Valve("Salvage", 800, 1, 0.1)],
-    [Pipe("Nice", 0.01, 2.16, 10.0, 0.1)],
-    [Bend("90", 90, 0.3, 1.28, 0.1)],
-    [Bend("90", 90, 0.3, 1.28, 0.1)],
-    [Valve("Salvage", 800, 1, 0.1)],
-    [Operator("Scrap", "Dehydrator", 200, 48800, 0.5, oC.dehydrator)],
-    [Valve("Salvage", 800, 1, 0.1)],
-    [Pipe("Nice", 0.01, 2.16, 3.05, 0.1)],
-    [Duct("1", 228, 1, 1)]
-]
-
+# generic = [
+#     [Pump("Cheap", 290, 36, 0.8)],
+#     [Bend("90", 90, 0.3, 1.28, 0.1)],
+#     [Pipe("Nice", 0.01, 2.16, 15.24, 0.1)],
+#     [Bend("90", 90, 0.3, 1.28, 0.1)],
+#     [Valve("Salvage", 800, 1, 0.1)],
+#     [Operator("Scrap", "Fermenter", 320, 46600, 0.5, oC.fermenter)],
+#     # fermenters(),
+#     [Valve("Salvage", 800, 1, 0.1)],
+#     [Pipe("Nice", 0.01, 2.16, 10, 0.1)],
+#     [Valve("Salvage", 800, 1, 0.1)],
+#     [Operator("Scrap", "Filter", 200, 48800, 0.5, oC.filt)],
+#     [Valve("Salvage", 800, 1, 0.1)],
+#     [Pipe("Nice", 0.01, 2.16, 10.0, 0.1)],
+#     [Valve("Salvage", 800, 1, 0.1)],
+#     [Operator("Scrap", "Distiller", 390, 47004, 0.81, oC.distiller)],
+#     [Valve("Salvage", 800, 1, 0.1)],
+#     [Pipe("Nice", 0.01, 2.16, 10.0, 0.1)],
+#     [Bend("90", 90, 0.3, 1.28, 0.1)],
+#     [Bend("90", 90, 0.3, 1.28, 0.1)],
+#     [Valve("Salvage", 800, 1, 0.1)],
+#     [Operator("Scrap", "Dehydrator", 200, 48800, 0.5, oC.dehydrator)],
+#     [Valve("Salvage", 800, 1, 0.1)],
+#     [Pipe("Nice", 0.01, 2.16, 3.05, 0.1)],
+#     [Duct("1", 228, 1, 1)]
+# ]
 
 
 # generic = [fermenters(), filters(), pipes(10, 0.15), valves(0.15), distillers(), dehydrators(), valves(0.15), pipes(10, 0.15)]
-stdDiam = 0.12
-valveOpt = 2 # runs tell us this is best
+stdDiam = 0.15
+valveOpt = 3 # runs tell us this is best
 generic = [pumps(36), [valves(stdDiam)[valveOpt]], fermenters(), [valves(stdDiam)[valveOpt]], pipes(10, stdDiam), [valves(stdDiam)[valveOpt]], filters(), [valves(stdDiam)[valveOpt]], bends(90, stdDiam), pipes(15, stdDiam), [valves(stdDiam)[valveOpt]], distillers(), [valves(stdDiam)[valveOpt]], pipes(10, stdDiam), [valves(stdDiam)[valveOpt]], dehydrators(), [valves(stdDiam)[valveOpt]], bends(90, stdDiam), pipes(10, stdDiam)]
+
+
+
 # generic = [pumps(36), valves(stdDiam), fermenters(), valves(stdDiam), pipes(10, stdDiam), valves(stdDiam), filters(), valves(stdDiam), bends(90, stdDiam), pipes(15, stdDiam), valves(stdDiam), distillers(), valves(stdDiam), pipes(10, stdDiam), valves(stdDiam), dehydrators(), valves(stdDiam), bends(90, stdDiam), pipes(10, stdDiam)]
 
 # generic = [
-#     [Pump("Cheap", 510, 36, 0.8)],
-#     [Valve("Glorious", 500, 76, stdDiam)],
-#     [Operator("Premium", "Fermenter", 460, 47500, 0.9, oC.fermenter)],
-#     [Valve("Glorious", 500, 76, stdDiam)],
+#     [Pump("Cheap", 510.0, 36, 0.8)],
+#     [valves(stdDiam)[valveOpt]],
+#     [Operator("Premium", "Fermenter", 460.0, 47500.0, 0.9, oC.fermenter)],
+#     [valves(stdDiam)[valveOpt]],
 #     [Pipe("Salvage", 0.05, 26, 10, stdDiam)],
-#     [Valve("Glorious", 500, 76, stdDiam)],
-#     [Operator("Premium", "Filter", 280, 50350, 0.9, oC.filt)],
-#     [Valve("Glorious", 500, 76, stdDiam)],
+#     [valves(stdDiam)[valveOpt]],
+#     [Operator("Premium", "Filter", 280.0, 50350.0, 0.9, oC.filt)],
+#     [valves(stdDiam)[valveOpt]],
 #     [Bend("90", 90, 0.3, 80, stdDiam)],
 #     [Pipe("Salvage", 0.05, 26, 15, stdDiam)],
-#     [Valve("Glorious", 500, 76, stdDiam)],
-#     [Operator("Average", "Distiller", 460, 47812, 0.9, oC.distiller)],
-#     [Valve("Glorious", 500, 76, stdDiam)],
+#     [valves(stdDiam)[valveOpt]],
+#     [Operator("Average", "Distiller", 460.0, 47812.0, 0.9, oC.distiller)],
+#     [valves(stdDiam)[valveOpt]],
 #     [Pipe("Salvage", 0.05, 26, 10, stdDiam)],
-#     [Valve("Glorious", 500, 76, stdDiam)],
-#     [Operator("World Class", "Dehydrator", 480, 51000, 0.98, oC.dehydrator)],
+#     [valves(stdDiam)[valveOpt]],
+#     [Operator("World Class", "Dehydrator", 480.0, 51000.0, 0.98, oC.dehydrator)],
+#     [valves(stdDiam)[valveOpt]],
 #     [Bend("90", 90, 0.3, 80, stdDiam)],
-#     [Valve("Glorious", 500, 76, stdDiam)],
 #     [Pipe("Salvage", 0.05, 26, 10, stdDiam)]
 # ]
 

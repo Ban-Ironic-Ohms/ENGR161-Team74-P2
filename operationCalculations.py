@@ -86,7 +86,9 @@ class Solution:
         return density
     
     def __str__(self) -> str:
-        ret = f"{self.water:.4f}m^3/h water, {self.fiber:.4f}m^3/h fiber, {self.sugar:.4f}m^3/h sugar, {self.ethanol:.4f}m^3/h ethanol, {self.co2:.4f}m^3/h co2 with total volume flow rate {self.volumeFlowRate():.4f} m^3/h and density {self.density():.4f}"
+        # ret = f"{self.water:.4f}m^3/h water, {self.fiber:.4f}m^3/h fiber, {self.sugar:.4f}m^3/h sugar, {self.ethanol:.4f}m^3/h ethanol, {self.co2:.4f}m^3/h co2 with total volume flow rate {self.volumeFlowRate():.4f} m^3/h and density {self.density():.4f}"
+        ret = f"{self.water:.4f}m^3/h water, {self.fiber:.4f}m^3/h fiber, {self.sugar:.4f}m^3/h sugar, {self.ethanol:.4f}m^3/h ethanol, {self.co2:.4f}m^3/h co2 with total volume flow rate {self.volumeFlowRate():.4f} m^3/h "
+        
         try:
             ret += f"\nWASTE: {self.waste}"
             # pass

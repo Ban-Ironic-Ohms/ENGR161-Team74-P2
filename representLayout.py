@@ -223,15 +223,13 @@ class Layout:
         
         return True
     
-    def addWaste(self, object):
-        pass
-    # TODO!!
-    
     def printList(self):
         start = self.head
         finalString = ""
         while start:
             tempString = start.data.name + " " + str(type(start.data))[24:-2]
+            
+            # tempString += f"{vars(start.data)}\n{vars(start.massFlow)}\n\n"
             finalString += str(tempString)
             start = start.getNextNode()
 
@@ -303,6 +301,7 @@ AGGREGATE WASTE: {self.getLastNode().massFlow.waste}"
         cost = 0
         while curr:
             # if issubclass(type(curr.data), Transfer):
+            # print(vars(curr.massFlow))
             cost += curr.data.calculateCost(curr.massFlow)
             curr = curr.getNextNode()
 
@@ -352,6 +351,8 @@ AGGREGATE WASTE: {self.getLastNode().massFlow.waste}"
         return (self.ethanolAmount() *  2.116E7) / self.layoutPower()
     
     def layoutScore(self, minPow, maxPow, minStatCost, maxStatCost):
+        
+        # print(f"calculating score")
         if self.ethanolConcentration() < 0.98:
             self.score = 0
             return self.score
