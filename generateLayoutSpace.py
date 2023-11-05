@@ -172,7 +172,7 @@ generic = [
 
 # generic = [fermenters(), filters(), pipes(10, 0.15), valves(0.15), distillers(), dehydrators(), valves(0.15), pipes(10, 0.15)]
 stdDiam = 0.12
-valveOpt = 0 # runs tell us this is best
+valveOpt = 2 # runs tell us this is best
 generic = [pumps(36), [valves(stdDiam)[valveOpt]], fermenters(), [valves(stdDiam)[valveOpt]], pipes(10, stdDiam), [valves(stdDiam)[valveOpt]], filters(), [valves(stdDiam)[valveOpt]], bends(90, stdDiam), pipes(15, stdDiam), [valves(stdDiam)[valveOpt]], distillers(), [valves(stdDiam)[valveOpt]], pipes(10, stdDiam), [valves(stdDiam)[valveOpt]], dehydrators(), [valves(stdDiam)[valveOpt]], bends(90, stdDiam), pipes(10, stdDiam)]
 # generic = [pumps(36), valves(stdDiam), fermenters(), valves(stdDiam), pipes(10, stdDiam), valves(stdDiam), filters(), valves(stdDiam), bends(90, stdDiam), pipes(15, stdDiam), valves(stdDiam), distillers(), valves(stdDiam), pipes(10, stdDiam), valves(stdDiam), dehydrators(), valves(stdDiam), bends(90, stdDiam), pipes(10, stdDiam)]
 
@@ -258,15 +258,18 @@ def bestScore(layoutSpace):
             printBuffer = 0
         printBuffer += 1
         
-        if minPow > layout.layoutPower():
-            minPow = layout.layoutPower()
-        if maxPow < layout.layoutPower():
-            maxPow = layout.layoutPower()
+        pow = layout.layoutPower()
+        cost = layout.layoutStaticCost()
+        
+        if minPow > pow:
+            minPow = pow
+        if maxPow < pow:
+            maxPow = pow
             
-        if minStatCost > layout.layoutStaticCost():
-            minStatCost = layout.layoutStaticCost()
-        if maxStatCost < layout.layoutStaticCost():
-            maxStatCost = layout.layoutStaticCost()
+        if minStatCost > cost:
+            minStatCost = cost
+        if maxStatCost < cost:
+            maxStatCost = cost
 
     
     maxScore = (-100, 0)
