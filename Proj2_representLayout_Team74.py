@@ -1,32 +1,48 @@
-# we need to represent the layout of the factory. Important peices are: 
-# 1) unit operations ferm, dhyd, dist, and filt
-# 2) LINKED LIST!!!!!!!!!
-# 2) pumps, pipes, ductwork for gasses (waste), turns
-# 3) valves
+# Project 2: Modeling Mass and Energy Balances
+# File: Proj2_representLayout_Team74.py
+# Date: 5 November 2023
+# By: Micah Robinson
+# robin709
+# Mitchell McCormick 
+# mccorm84
+# Amanda Zheng 
+# zheng749
+# Savannah Hoar
+# shoar
+# Section: 5
+# Team: 74
+#
+# ELECTRONIC SIGNATURE
+# Micah Robinson
+# Mitchell McCormick 
+# Amanda Zheng 
+# Savannah Hoar
+#
+# The electronic signatures above indicate that the program
+# submitted for evaluation is the combined effort of all
+# team members and that each member of the team was an
+# equal participant in its creation. In addition, each
+# member of the team has a general understanding of
+# all aspects of the program development and execution.
+#
+# This program creates a framework for modeling a system of arbitrary components
+# in a linear arrangment of class objects.
 
-# we need to make a linked list that sends the solution between different THINGS (above)
-# we also need an OPTIONAL output for waste that also costs but doesent eff, if that makes sense
+# This program refrenced outside code for the linked list implimentation
 
-# so, what do we do with these? we want some sense of cost (everything), 
-# efficiency (everything maybe? basically, just a sense of how much energy it uses)
+# ----------------- IMPORTS -------------------
 
-# the operators needs t9.81o have an associated function which you pass ANOTHER object (the solution)
-# through to get the resultant solution
-
-# QUESTION: will the different Operators be for the different options? 
-# no. we will generate linked lists for each FULL PATH OPTIONS passing the name, eff, etc for each
-
-# superclass for the "important peices"
-
-
-import operationCalculations as oC
+import Proj2_operationCalculations_Team74 as oC
 import numpy as np
 import itertools
 import math
 import time
 
-# INITIAL_MASS_FLOW = oC.Solution(100000)
+# ----------------- CONSTANTS -------------------
+
 GRAVITY = 9.81
+
+# ----------------- CLASSES FOR EQUIPMENT -------------------
 
 class Part():
     def __init__(self, name) -> None:
@@ -112,7 +128,7 @@ class Pipe(Transfer):
             return 0
         
         # --- pipe vibration energy loss modeled as power usage ---
-        # These values come from research and assumptions
+        # These values come from research and assumptions listed in poster
         speedSound = 3230
         youngMod = 29.5
         possionRatio = 0.29
@@ -183,12 +199,15 @@ class Valve(Transfer):
         # print(f"--valve head loss-- {loss}")
         return loss
  
-# STRUCTURE RULES:
-# 1) each operator must have a valve on its inlet and outlet
-# 2) each valve/pipe/bend connection must have the same diamter
+ # ----------------- REPRESENT LAYOUT AS LINKED LIST -------------------
 
-# While I know how to make a linked list, I did maybe forget, so this is loosly based on 
-# https://github.com/M2skills/Linked-List-in-Python/blob/master/LinkedList.py
+# CODE FROM EXTERNAL SOURCE
+
+# Basic linked list and basic implimentation refrenced from my (Micah's) own code:
+# https://github.com/Ban-Ironic-Ohms/2021-tide-py/blob/master/Intro/linkedListsandDict.py
+
+# no code was directly copied, though a linked list implimentaiton is fairly standard
+# source was used for the implimentation of the __init__ method in Node and printList method in Layout.
 
 class Node:
     def __init__(self, data=None, massFlow = 0) -> None:
@@ -224,17 +243,17 @@ class Layout:
         return True
     
     def printList(self):
-        start = self.head
+        curr = self.head
         finalString = ""
-        while start:
-            tempString = start.data.name + " " + str(type(start.data))[24:-2]
+        while curr:
+            tempString = curr.data.name + " " + str(type(curr.data))[24:-2]
             
-            # tempString += f"{vars(start.data)}\n{vars(start.massFlow)}\n\n"
+            # tempString += f"{vars(curr.data)}\n{vars(curr.massFlow)}\n\n"
             finalString += str(tempString)
-            start = start.getNextNode()
+            curr = curr.getNextNode()
 
             # if next node exists only the append seperator
-            if start:
+            if curr:
                 finalString += " -- "
 
         return finalString

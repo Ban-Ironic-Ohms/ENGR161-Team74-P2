@@ -1,3 +1,34 @@
+# Project 2: Modeling Mass and Energy Balances
+# File: Proj2_operationCalculations_Team74.py
+# Date: 5 November 2023
+# By: Micah Robinson
+# robin709
+# Mitchell McCormick 
+# mccorm84
+# Amanda Zheng 
+# zheng749
+# Savannah Hoar
+# shoar
+# Section: 5
+# Team: 74
+#
+# ELECTRONIC SIGNATURE
+# Micah Robinson
+# Mitchell McCormick 
+# Amanda Zheng 
+# Savannah Hoar
+#
+# The electronic signatures above indicate that the program
+# submitted for evaluation is the combined effort of all
+# team members and that each member of the team was an
+# equal participant in its creation. In addition, each
+# member of the team has a general understanding of
+# all aspects of the program development and execution.
+#
+# This file has a class that represnts the solution at a given point in the 
+# system, as well as functions that change that solution for each operator. It 
+# also handles waste through the classes and functions automatically
+
 class Solution:
     def __init__(self, initialVFR) -> None:
         """
@@ -99,11 +130,7 @@ class Solution:
         # return self.ethanol / self.volumeFlowRate()
         return self.ethanolMFR / self.massFlowRate()
 
-waste = 0 #measured in % mass of original value. 
-#class waste(solution):
-#   def __init__(self) -> None:
-#      super().__init__()
-#     self.state = solid lq, gas
+waste = 0
 
 
 def fermenter(eff, sol):
