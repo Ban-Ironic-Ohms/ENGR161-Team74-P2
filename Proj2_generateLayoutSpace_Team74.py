@@ -37,7 +37,7 @@ import functools
 
 #        ---- create lists of options for each part ----
 def fermenters():
-    fid = open('data/Proj2_fermenters_Team74.csv', 'r')
+    fid = open('Proj2_fermenters_Team74.csv', 'r')
     header = fid.readline()
     headers = header.strip().split(',')
     rawData = fid.readlines()
@@ -50,7 +50,7 @@ def fermenters():
     return fermObjs
 
 def distillers():
-    fid = open("data/Proj2_distillers_Team74.csv", "r")
+    fid = open("Proj2_distillers_Team74.csv", "r")
     header = fid.readline()
     headers = header.strip().split(',')
     rawData = fid.readlines()
@@ -63,7 +63,7 @@ def distillers():
     return distObjs
 
 def dehydrators():
-    fid = open("data/Proj2_dehydratorsFilters_Team74.csv", "r")
+    fid = open("Proj2_dehydratorsFilters_Team74.csv", "r")
     header = fid.readline()
     headers = header.strip().split(',')
     rawData = fid.readlines()
@@ -76,7 +76,7 @@ def dehydrators():
     return dhydObjs
 
 def filters():
-    fid = open("data/Proj2_dehydratorsFilters_Team74.csv", "r")
+    fid = open("Proj2_dehydratorsFilters_Team74.csv", "r")
     header = fid.readline()
     headers = header.strip().split(',')
     rawData = fid.readlines()
@@ -90,7 +90,7 @@ def filters():
 
 def pumps(profRating = 0):
     profRating = 36
-    fid = open('data/Proj2_pumps_Team74.csv', 'r')
+    fid = open('Proj2_pumps_Team74.csv', 'r')
     header = fid.readline()
     headers = header.strip().split(',')
     rawData = fid.readlines()
@@ -108,7 +108,7 @@ def pumps(profRating = 0):
     return pumps
 
 def bends(angle, diam):
-    fid = open('data/Proj2_bend_Team74.csv','r')
+    fid = open('Proj2_bend_Team74.csv','r')
     header = fid.readline()
     anglesl = header.strip().split(',')
     anglesl = anglesl[1:]
@@ -121,7 +121,7 @@ def bends(angle, diam):
     return bend
 
 def pipes(length, diam = None):
-    fid = open('data/Proj2_pipes_Team74.csv','r')
+    fid = open('Proj2_pipes_Team74.csv','r')
     header = fid.readline()
     headers = header.strip().split(',')
     rawData = fid.readlines()
@@ -139,7 +139,7 @@ def pipes(length, diam = None):
     return pipes
 
 def valves(diam):
-    fid = open('data/Proj2_valves_Team74.csv','r')
+    fid = open('Proj2_valves_Team74.csv','r')
     header = fid.readline()
     headers = header.strip().split(",")
     rawData = fid.readlines()
@@ -156,7 +156,7 @@ def valves(diam):
     return valves
 
 def ducts(diam, length):
-    fid =  open('data/Proj2_ducts_Team74.csv','r')
+    fid =  open('Proj2_ducts_Team74.csv','r')
     fF = fid.readline()
     fricF = fF.strip().split(',')
     rawData = fid.readlines()
