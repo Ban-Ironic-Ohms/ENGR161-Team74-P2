@@ -1,5 +1,5 @@
 # Project 2: Modeling Mass and Energy Balances
-# File: generateLayoutSpace.py
+# File: Proj2_generateLayoutSpace_Team74.py
 # Date: 5 November 2023
 # By: Micah Robinson
 # robin709

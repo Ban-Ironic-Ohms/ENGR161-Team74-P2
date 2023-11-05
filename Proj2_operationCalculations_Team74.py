@@ -1,5 +1,5 @@
 # Project 2: Modeling Mass and Energy Balances
-# File: operationCalculations.py
+# File: Proj2_operationCalculations_Team74.py
 # Date: 5 November 2023
 # By: Micah Robinson
 # robin709
@@ -26,7 +26,8 @@
 # all aspects of the program development and execution.
 #
 # This file has a class that represnts the solution at a given point in the 
-# system, as well as functions that change that solution for each operator.
+# system, as well as functions that change that solution for each operator. It 
+# also handles waste through the classes and functions automatically
 
 class Solution:
     def __init__(self, initialVFR) -> None:
