@@ -1,7 +1,5 @@
 ## ENGR161 Project 2
 
-IMPORTANT: The *.csv files MUST be placed into a folder 'data' on the same level as the three .py files for the code to run properly. 
-
 # Usage
 To run the demo preprogramed into this code, run the file generateLayoutSpace.py
 
